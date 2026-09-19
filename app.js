@@ -53,7 +53,7 @@
   };
   if ("speechSynthesis" in window) { najdiHlas(); speechSynthesis.onvoiceschanged = najdiHlas; }
   $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Názvy cvikov hovorí nahraný hlas."); };
-  $("#btn-hlas-test").onclick = () => { audio(); povedz(["dve", "uttánásana", "predklon"], true); };
+  $("#btn-hlas-test").onclick = () => { audio(); povedz(["dve", "predklon", "uttánásana"], true); };
   $("#btn-hlas-test2").onclick = () => { audio(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Použije sa len pre vety, ktoré nie sú nahrané."); };
   /* ---------- nahraný hlas (predrenderované klipy z Google TTS, hlas/manifest.json) ---------- */
   let KLIPY = null, klipCache = {}, fronta = [], hraAudio = null;
@@ -192,7 +192,7 @@
       const ct = k.c ? COUNT[k.c] : null;
       const casti = [];
       if (ct && N.sanskrit) casti.push(ct[1]); else if (k.c) casti.push(String(k.c));
-      if (N.nazvy) { casti.push(k.vysl || k.san); casti.push(k.sk); }
+      if (N.nazvy) { casti.push(k.sk); casti.push(k.vysl || k.san); } /* najskôr slovensky, potom sanskrit (pokyn 19.9.) */
       povedz(casti, true);
     };
 
