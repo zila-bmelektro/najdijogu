@@ -1,0 +1,5 @@
+<?php $vs = nj_audit_citaj(300); $f = $_GET['akcia'] ?? ''; if ($f) $vs = array_filter($vs, fn($a) => str_starts_with($a['akcia'], $f)); ?>
+<h1>Admin — aktivity <small class="drobne">posledných 300 · filter: <a href="/?p=admin_aktivity">všetko</a> · <a href="/?p=admin_aktivity&akcia=prihlasenie">prihlásenia</a> · <a href="/?p=admin_aktivity&akcia=clanok">články</a> · <a href="/?p=admin_aktivity&akcia=predplatne">predplatné</a> · <a href="/?p=admin_aktivity&akcia=registracia">registrácie</a></small></h1>
+<table class="tab"><thead><tr><th>Kedy</th><th>Kto</th><th>Akcia</th><th>Partner</th><th>Detail</th></tr></thead><tbody>
+<?php foreach ($vs as $a): $pp = !empty($a['partner']) ? nj_partner($a['partner']) : null; ?><tr><td><?= date('j.n.Y H:i', strtotime($a['t'])) ?></td><td><?= h($a['kto']) ?></td><td><?= h($a['akcia']) ?></td><td><?= $pp ? '<a href="/?p=admin_partner&id=' . h($pp['id']) . '">' . h($pp['nazov']) . '</a>' : '' ?></td><td class="tlm"><?= h($a['detail'] ?? '') ?></td></tr><?php endforeach; ?>
+</tbody></table>

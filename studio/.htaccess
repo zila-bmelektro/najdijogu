@@ -1,0 +1,15 @@
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Robots-Tag "noindex"
+  Header always set Strict-Transport-Security "max-age=31536000"
+</IfModule>
+<FilesMatch "\.(json|log|lock)$">
+  Require all denied
+</FilesMatch>
+RewriteRule ^(lib|obrazovky)/ - [F]
+Options -Indexes

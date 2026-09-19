@@ -1,0 +1,11 @@
+<?php $vs = nj_partneri(); uasort($vs, fn($a, $b) => strcmp($b['vytvorene'], $a['vytvorene']));
+$filter = $_GET['stav'] ?? ''; if ($filter) $vs = array_filter($vs, fn($p) => $p['stav'] === $filter);
+$cl = nj_clanky(); $naSchvalenie = count(array_filter($cl, fn($c) => $c['stav'] === 'schvalene')); $obj = array_filter(nj_citaj('objednavky', []), fn($o) => $o['stav'] === 'caka_prevod');
+$st30 = []; foreach (nj_partneri() as $p) { $s = nj_stat_citaj($p['id'], 30)['spolu']; $st30[$p['id']] = ($s['zobrazenie_profilu'] ?? 0) + ($s['zobrazenie_v_zozname'] ?? 0); }
+?>
+<h1>Admin — partneri <small class="drobne"><?= count(nj_partneri()) ?> jogovní</small></h1>
+<div class="dlazdice"><div class="dl"><b><?= count(array_filter(nj_partneri(), fn($p) => $p['stav'] === 'registrovana')) ?></b><span>čakajú na schválenie</span></div><div class="dl"><b><?= count(array_filter(nj_partneri(), 'nj_partner_aktivny')) ?></b><span>platiacich partnerov</span></div><div class="dl"><b><?= $naSchvalenie ?></b><span>článkov na publikovanie · <a href="/?p=admin_clanky">fronta</a></span></div><div class="dl"><b><?= count($obj) ?></b><span>objednávok prevodom čaká na úhradu</span></div><div class="dl"><b><?= array_sum($st30) ?></b><span>zobrazení celkovo · 30 dní</span></div></div>
+<p class="drobne">Filter: <a href="/?p=admin">všetky</a> · <a href="/?p=admin&stav=nova">nové</a> · <a href="/?p=admin&stav=registrovana">na schválenie</a> · <a href="/?p=admin&stav=schvalena">schválené</a> · <a href="/?p=admin&stav=pozastavena">pozastavené</a> · <a href="/?p=admin_aktivity">aktivity</a> · <a href="/api/export.php?co=partneri" target="_blank">export CSV</a></p>
+<table class="tab"><thead><tr><th>Jogovňa</th><th>Mesto</th><th>E-mail</th><th>Stav</th><th>Balík</th><th>Platí do</th><th>Zobr. 30 d</th><th>Vytvorené</th></tr></thead><tbody>
+<?php foreach ($vs as $p): ?><tr><td><a href="/?p=admin_partner&id=<?= h($p['id']) ?>"><?= h($p['nazov']) ?></a></td><td><?= h($p['mesto']) ?></td><td><?= h($p['email']) ?></td><td><span class="stav stav-<?= h($p['stav']) ?>"><?= h($p['stav']) ?></span></td><td><?= h(NJ_BALIKY[$p['balik']]['nazov']) ?></td><td><?= nj_datum($p['plati_do']) ?></td><td><?= $st30[$p['id']] ?? 0 ?></td><td><?= nj_datum($p['vytvorene']) ?></td></tr><?php endforeach; ?>
+</tbody></table>

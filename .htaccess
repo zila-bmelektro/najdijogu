@@ -4,6 +4,13 @@ RewriteEngine On
 RewriteCond %{HTTPS} off [OR]
 RewriteCond %{HTTP_HOST} ^www\. [NC]
 RewriteRule ^ https://najdijogu.sk%{REQUEST_URI} [L,R=301]
+# verejný adresár jogovní: /jogovne/... → jogovne/index.php?c=...
+RewriteRule ^jogovne/?$ jogovne/index.php [L,QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^jogovne/(.+)$ jogovne/index.php?c=$1 [L,QSA]
+RewriteRule ^pre-jogovne/?$ jogovne/index.php?c=pridat [L,QSA]
+# studio je subdoména (sub/studio → symlink na web/studio); z hlavnej domény sem nikto nechodí
+RewriteRule ^studio/ - [F]
 
 # bezpečnostné hlavičky (M-BEZPECNOST vrstva A)
 <IfModule mod_headers.c>
