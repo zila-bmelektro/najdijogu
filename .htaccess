@@ -1,0 +1,28 @@
+# najdijogu.sk — WebSupport (Apache 2.4, PHP 8.5)
+RewriteEngine On
+# HTTPS + bez www
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://najdijogu.sk%{REQUEST_URI} [L,R=301]
+
+# bezpečnostné hlavičky (M-BEZPECNOST vrstva A)
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  # appka si súbory verzionuje cez service worker – krátka cache HTML/JS, dlhá pre hlas a obrázky
+  <FilesMatch "\.(html|js|css|json)$">
+    Header set Cache-Control "max-age=300, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(mp3|svg|png|jpg|webp|woff2)$">
+    Header set Cache-Control "max-age=2592000"
+  </FilesMatch>
+</IfModule>
+
+AddType audio/mpeg .mp3
+AddType image/svg+xml .svg
+AddType application/manifest+json .webmanifest
+AddDefaultCharset UTF-8
+Options -Indexes
