@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Studio žije len na studio.najdijogu.sk (sub/studio → symlink); cez hlavnú doménu /studio/ nikto nechodí
+RewriteCond %{HTTP_HOST} !^studio\.najdijogu\.sk$ [NC]
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:\d+)?$ [NC]
+RewriteRule ^ - [F]
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "DENY"
