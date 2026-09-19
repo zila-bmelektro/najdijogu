@@ -1,4 +1,6 @@
-/* Obrysová postava: SVG kostra z kľúčových bodov + plynulý prechod medzi pózami. */
+/* Obrysová postava: SVG kostra z kľúčových bodov + plynulý prechod medzi pózami.
+   `aktualna` drží VŽDY to, čo je práve nakreslené (aj uprostred prechodu) — ďalší pohyb
+   preto nadväzuje na skutočnú polohu, nie na naposledy dokončenú pózu. */
 
 class Postava {
   constructor(svg, farba) {
@@ -14,43 +16,38 @@ class Postava {
       </g>`;
     this.el = {};
     ["nohaL","rukaL","chrbat","nohaR","rukaR","hlava"].forEach(id => this.el[id] = this.svg.querySelector("#"+id));
-    this.aktualna = this.klon(POZY.samasthiti);
-    this.zrkadlo = false;
+    this.aktualna = this.abs(POZY.samasthiti, false);   // absolútne súradnice (zrkadlenie už zapracované)
     this.anim = null;
-    this.kresli(this.aktualna, false);
+    this.kresli(this.aktualna);
   }
   klon(p) { const o = {}; for (const k in p) o[k] = [p[k][0], p[k][1]]; return o; }
-  bod(pt, zrk) { return zrk ? [200 - pt[0], pt[1]] : pt; }
-  kresli(p, zrk) {
-    const b = k => this.bod(p[k], zrk);
-    const pl = (id, ks) => this.el[id].setAttribute("points", ks.map(k => b(k).join(",")).join(" "));
+  abs(p, zrk) { const o = {}; for (const k in p) o[k] = zrk ? [200 - p[k][0], p[k][1]] : [p[k][0], p[k][1]]; return o; }
+  kresli(p) {
+    const pl = (id, ks) => this.el[id].setAttribute("points", ks.map(k => p[k].join(",")).join(" "));
     pl("nohaL", ["p","kL","fL"]); pl("nohaR", ["p","kR","fR"]);
     pl("rukaL", ["n","eL","wL"]); pl("rukaR", ["n","eR","wR"]);
-    const n = b("n"), h = b("h"), hip = b("p");
-    this.el.chrbat.setAttribute("x1", n[0]); this.el.chrbat.setAttribute("y1", n[1]);
-    this.el.chrbat.setAttribute("x2", hip[0]); this.el.chrbat.setAttribute("y2", hip[1]);
-    this.el.hlava.setAttribute("cx", h[0]); this.el.hlava.setAttribute("cy", h[1]);
+    this.el.chrbat.setAttribute("x1", p.n[0]); this.el.chrbat.setAttribute("y1", p.n[1]);
+    this.el.chrbat.setAttribute("x2", p.p[0]); this.el.chrbat.setAttribute("y2", p.p[1]);
+    this.el.hlava.setAttribute("cx", p.h[0]); this.el.hlava.setAttribute("cy", p.h[1]);
   }
-  /* prejdi do pózy za `ms` milisekúnd (dĺžka dychovej fázy) */
-  prejdi(nazov, ms, zrk) {
-    const ciel = POZY[nazov]; if (!ciel) return;
+  /* prejdi z TERAJŠEJ polohy do pózy za `ms` milisekúnd */
+  prejdi(nazov, ms, zrk, hotovo) {
+    const ciel = this.abs(POZY[nazov], !!zrk); if (!ciel) return;
     if (this.anim) cancelAnimationFrame(this.anim);
-    const od = this.klon(this.aktualna), odZrk = this.zrkadlo, doZrk = !!zrk;
+    const od = this.klon(this.aktualna);
     const t0 = performance.now();
     const ease = t => t < .5 ? 2*t*t : -1 + (4 - 2*t)*t;
     const krok = now => {
       const u = Math.min(1, (now - t0) / Math.max(1, ms));
       const e = ease(u);
       const p = {};
-      for (const k in ciel) {
-        const a = this.bod(od[k], odZrk), c = this.bod(ciel[k], doZrk);
-        p[k] = [a[0] + (c[0]-a[0])*e, a[1] + (c[1]-a[1])*e];
-      }
-      this.kresli(p, false);
+      for (const k in ciel) p[k] = [od[k][0] + (ciel[k][0]-od[k][0])*e, od[k][1] + (ciel[k][1]-od[k][1])*e];
+      this.aktualna = p;
+      this.kresli(p);
       if (u < 1) this.anim = requestAnimationFrame(krok);
-      else { this.aktualna = this.klon(ciel); this.zrkadlo = doZrk; this.anim = null; }
+      else { this.anim = null; if (hotovo) hotovo(); }
     };
     this.anim = requestAnimationFrame(krok);
   }
-  skoc(nazov, zrk) { this.aktualna = this.klon(POZY[nazov]); this.zrkadlo = !!zrk; this.kresli(this.aktualna, this.zrkadlo); }
+  skoc(nazov, zrk) { if (this.anim) cancelAnimationFrame(this.anim); this.anim = null; this.aktualna = this.abs(POZY[nazov], !!zrk); this.kresli(this.aktualna); }
 }

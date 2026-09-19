@@ -4,7 +4,7 @@
   const $$ = s => Array.from(document.querySelectorAll(s));
 
   /* ---------- nastavenia (uložené v prehliadači) ---------- */
-  const N = Object.assign({ in: 5, out: 5, zamok: true, zvuk: true, hlas: true, sekv: "A", kola: 3, pes: 5, sanskrit: true, nazvy: true },
+  const N = Object.assign({ in: 5, out: 5, zamok: true, zvuk: true, hlas: true, hlasURI: "", sekv: "A", kola: 3, pes: 5, sanskrit: true, nazvy: true },
     (() => { try { return JSON.parse(localStorage.getItem("nj-nast") || "{}"); } catch (e) { return {}; } })());
   const uloz = () => { try { localStorage.setItem("nj-nast", JSON.stringify(N)); } catch (e) {} };
   const fmt = s => s.toFixed(1).replace(".", ",") + " s";
@@ -39,12 +39,21 @@
 
   /* ---------- hlas (Web Speech, sk-SK; ak nie je, ticho) ---------- */
   let hlasSK = null;
+  /* poradie: uložený výber → "Natural/Online" sk hlas → iný sk → cs. Nie každý prístroj má slovenský hlas;
+     zoznam sa ponúka v nastavení, aby si človek vybral ten, ktorý mu znie najprirodzenejšie. */
+  const zoznamHlasov = () => ("speechSynthesis" in window) ? speechSynthesis.getVoices().filter(x => /^(sk|cs)/i.test(x.lang)) : [];
   const najdiHlas = () => {
-    if (!("speechSynthesis" in window)) return;
-    const v = speechSynthesis.getVoices();
-    hlasSK = v.find(x => /^sk/i.test(x.lang)) || v.find(x => /^cs/i.test(x.lang)) || null;
+    const v = zoznamHlasov(); if (!v.length) { hlasSK = null; return; }
+    hlasSK = v.find(x => x.voiceURI === N.hlasURI) || v.find(x => /^sk/i.test(x.lang) && /natural|online|neural/i.test(x.name)) || v.find(x => /^sk/i.test(x.lang)) || v[0];
+    const sel = $("#in-hlas-vyber");
+    if (sel) {
+      sel.innerHTML = v.map(x => `<option value="${x.voiceURI}">${x.name.replace(/Microsoft |Google /, "")} (${x.lang})</option>`).join("") || "<option value=''>žiadny slovenský hlas v tomto prístroji</option>";
+      sel.value = hlasSK.voiceURI;
+    }
   };
   if ("speechSynthesis" in window) { najdiHlas(); speechSynthesis.onvoiceschanged = najdiHlas; }
+  $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); povedz("ekam, úrdhva hastásana, ruky hore", true); };
+  $("#btn-hlas-test").onclick = () => { audio(); povedz("dve, uttánásana, predklon", true); };
   const povedz = (text, dolezite) => {
     if (!N.hlas || !("speechSynthesis" in window) || !text) return;
     if (dolezite) speechSynthesis.cancel();
@@ -127,7 +136,7 @@
   const cv = (() => {
     const svg = $("#cv-svg"), post = new Postava(svg, "#f3efe4");
     const elCount = $("#cv-count"), elNazov = $("#cv-nazov"), elSk = $("#cv-nazov-sk"), elDych = $("#cv-dych"), elDris = $("#cv-dris"),
-          elKolo = $("#cv-kolo"), pruh = $("#cv-progres-pruh"), dPruh = $("#cv-dych-pruh-vnutro"), btnPauza = $("#cv-pauza");
+          elKolo = $("#cv-kolo"), elDalej = $("#cv-dalej"), elOstava = $("#cv-ostava"), pruh = $("#cv-progres-pruh"), dPruh = $("#cv-dych-pruh-vnutro"), btnPauza = $("#cv-pauza");
     let prog = [], i = 0, rezim = "tv", bezi = false, pauza = false, timer = null, holdTimer = null, wl = null;
 
     const zobrazKrok = (k, ms) => {
@@ -137,9 +146,17 @@
       elDych.textContent = k.d === "in" ? "NÁDYCH" : "VÝDYCH";
       elDych.className = "cv-dych " + (k.d === "in" ? "nadych" : "vydych");
       elDris.textContent = "drishti: " + k.dr;
-      elKolo.textContent = `${SEKVENCIE[k.sekv].nazov} · kolo ${k.kolo}/${k.kolaSpolu}`;
+      const vKole = prog.filter(x => x.sekv === k.sekv && x.kolo === k.kolo);
+      const poradie = vKole.indexOf(k) + 1;
+      elKolo.textContent = `${SEKVENCIE[k.sekv].nazov} · kolo ${k.kolo}/${k.kolaSpolu} · pohyb ${poradie}/${vKole.length}`;
+      const dalsi = prog[i + 1];
+      elDalej.textContent = dalsi ? `ďalej: ${dalsi.san} — ${dalsi.sk}` + (dalsi.kolo !== k.kolo || dalsi.sekv !== k.sekv ? ` (kolo ${dalsi.kolo})` : "") : "ďalej: koniec";
+      const ostava = prog.length - i - 1;
+      elOstava.textContent = `ostáva ${ostava} ${ostava === 1 ? "pohyb" : ostava < 5 ? "pohyby" : "pohybov"}`;
       pruh.style.width = (100 * i / prog.length) + "%";
-      post.prejdi(k.poza, ms, k.zrkadlo);
+      /* predcvičovanie: každý cvik sa ukáže od základného postoja; cvičenie: nadväzuje na predchádzajúci */
+      if (rezim === "predcvic") post.skoc("samasthiti");
+      post.prejdi(k.poza, ms * 0.85, k.zrkadlo);
     };
     const dychPruh = (d, ms) => {
       dPruh.style.transition = "none"; dPruh.style.width = d === "in" ? "0%" : "100%";
@@ -150,7 +167,7 @@
       const ct = k.c ? COUNT[k.c] : null;
       const casti = [];
       if (ct && N.sanskrit) casti.push(ct[1]); else if (k.c) casti.push(String(k.c));
-      if (N.nazvy) casti.push(k.sk);
+      if (N.nazvy) { casti.push(k.vysl || k.san); casti.push(k.sk); }
       povedz(casti.join(", "), true);
     };
 

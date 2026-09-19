@@ -111,3 +111,9 @@ input[type=range] { width: 100%; margin-top: 6px; accent-color: var(--zelena); }
   .cv-klav { display: none; }
   .dych-kruh-obal { min-height: 320px; }
 }
+
+.dalsie { max-width: 1100px; margin: 0 auto; padding: 0 24px 24px; }
+.dalsie p { max-width: 80ch; font-size: 1.05rem; }
+.cv-dalej { margin-top: 18px; color: #c9d4ce; font-size: clamp(.95rem, 1.8vw, 1.35rem); border-left: 3px solid var(--okr); padding-left: 12px; }
+.cv-ostava { color: #c9a24a; }
+.nast-telo select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #cfc9bb; background: #fff; font-size: 1rem; margin-top: 6px; }

@@ -45,10 +45,20 @@
     <div class="karta"><h3>3 · Cvič na televízore</h3><p>Pusti celú sekvenciu, oprie sa o tvoje tempo a beží sama. Päť pozdravov slnku A a päť B — základ každej aštanga praxe.</p></div>
   </div>
 
+  <section class="dalsie">
+    <h2>Čo pribudne</h2>
+    <p>Pozdravy slnku sú brána. Postupne pridávame celú Primary series tak, ako ju učil Pattabhi Jois: <b>standing</b> (Padangusthasana, trojuholníky, Prasarita, Parsvottanasana, Utthita Hasta, Utkatasana, Virabhadrasana), <b>seated</b> (Paschimottanasana, Janu Sirsasana, Marichyasana, Navasana, Baddha Konasana…), <b>backbend</b> a <b>finishing</b> (Sarvangasana, Sirsasana, Padmasana, Savasana). K tomu krátke formy na 15 / 30 / 45 minút, pránajáma, meditácia a režim „Mysore" — cvičíš po posledný cvik, ktorý už zvládaš.</p>
+  </section>
+
   <section id="jogovne" class="jogovne">
-    <h2>Jogovne v tvojom okolí</h2>
-    <p>Pripravujeme mapu jogovní na Slovensku a v Česku s hodnotením z Google a filtrom podľa vzdialenosti. Máš jogovňu? Napíš nám a budeš medzi prvými partnermi.</p>
-    <a class="btn" href="mailto:info@najdijogu.sk?subject=Jogov%C5%88a%20na%20najdijogu.sk">Prihlásiť jogovňu</a>
+    <p class="nadpis-mini">Doma je skvelý začiatok</p>
+    <h2>…ale joga je aj o ľuďoch.</h2>
+    <p>Cvičiť doma vo vlastnom tempe je najlepší spôsob, ako začať a ako si udržať každodennú prax. Príde však chvíľa, keď chceš, aby ti niekto skúsený opravil Chaturangu, ukázal, ako sa zopnúť v Marichyasane, alebo keď chceš jednoducho cvičiť medzi ľuďmi, ktorých joga baví rovnako ako teba. Vtedy sú tu jogovne — kurzy pre začiatočníkov, Mysore rána, skupinové lekcie, workshopy a víkendové pobyty.</p>
+    <p>Pripravujeme prehľad jogovní a lekcií na Slovensku a v Česku: podľa toho, kde si, s hodnotením z Google, s programom a možnosťou prihlásiť sa. Nájdeš, kam ísť za jogou vo svojom okolí.</p>
+    <div class="akcie">
+      <a class="btn primar" href="mailto:info@najdijogu.sk?subject=Chcem%20vedie%C5%A5%20o%20jogovniach">Daj mi vedieť, keď to spustíte</a>
+      <a class="btn" href="mailto:info@najdijogu.sk?subject=Jogov%C5%88a%20na%20najdijogu.sk">Mám jogovňu — chcem byť partner</a>
+    </div>
   </section>
 
   <footer class="pata">© 2026 najdijogu.sk · Slovensko · Česko · <a href="#" data-obr="oprogramoch">O projekte</a></footer>
@@ -92,6 +102,9 @@
       <p id="odhad" class="drobne"></p>
       <label class="prepinac"><input id="in-sanskrit" type="checkbox" checked> počítať po sanskritsky (ekam, dve, trīni…)</label>
       <label class="prepinac"><input id="in-nazvy" type="checkbox" checked> hovoriť názvy cvikov</label>
+      <label>Hlas <select id="in-hlas-vyber"><option value="">načítavam hlasy…</option></select></label>
+      <button class="btn mini" id="btn-hlas-test">▶ vyskúšať hlas</button>
+      <p class="drobne">Hlas dáva prístroj (tablet, TV, počítač) — ponuka sa líši. Ak žiadny neznie dobre, v ďalšej verzii pribudne vlastný nahraný hlas.</p>
     </div>
     <div class="akcie velke">
       <button class="btn" id="btn-predcvic">Predcvičovanie <small>tablet · krok za krokom</small></button>
@@ -106,6 +119,7 @@
     <button class="spat" id="cv-koniec">✕</button>
     <div id="cv-progres"><div id="cv-progres-pruh"></div></div>
     <div id="cv-kolo" class="cv-kolo">kolo 1/3</div>
+    <div id="cv-ostava" class="cv-kolo cv-ostava">ostáva —</div>
   </div>
   <div class="cv-stred">
     <svg id="cv-svg" viewBox="0 0 200 200" aria-label="postava"></svg>
@@ -115,6 +129,7 @@
       <div id="cv-nazov-sk" class="cv-nazov-sk">ruky hore</div>
       <div id="cv-dych" class="cv-dych nadych">NÁDYCH</div>
       <div id="cv-dris" class="cv-dris">drishti: palce</div>
+      <div id="cv-dalej" class="cv-dalej">ďalej: —</div>
     </div>
   </div>
   <div class="cv-dole">
