@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Najdi jogu — Aštanga s dychom, ktorý ti sedí</title>
+<meta name="description" content="Aštanga joga vedená dychom: nastav si tempo dýchania, obrysová postava ti predcvičí Surya Namaskara A a B, slovenský hlas povie názov cviku. Na tablete aj na televízore. Zadarmo.">
+<meta name="theme-color" content="#0f1a17">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="ikona.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ÚVOD -->
+<section id="uvod" class="obrazovka aktivna">
+  <header class="hlavicka">
+    <div class="logo"><span class="logo-znak"></span>najdi<b>jogu</b><span class="tld">.sk</span></div>
+    <nav class="hlavicka-nav">
+      <a href="#dych" data-obr="dych">Dýchanie</a>
+      <a href="#cvicenie" data-obr="nastavenie">Cvičenie</a>
+      <a href="#jogovne">Jogovne</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="hero-text">
+      <p class="nadpis-mini">Aštanga joga · Surya Namaskara A + B</p>
+      <h1>Joga s dychom, ktorý <em>ti</em> sedí.</h1>
+      <p class="perex">Nastav si tempo dýchania. Obrysová postava ti predcvičí každý cvik v tvojom tempe, hlas povie jeho názov a metronóm ti naznačí nádych a výdych. Na tablete si cviky predcvičíš, na televízore cvičíš bez zásahu.</p>
+      <div class="akcie">
+        <button class="btn primar" data-obr="dych">Začni dýchaním</button>
+        <button class="btn" data-obr="nastavenie">Rovno cvičiť</button>
+      </div>
+      <p class="drobne">Zadarmo · bez registrácie · funguje offline · SK/CZ</p>
+    </div>
+    <div class="hero-postava">
+      <svg id="hero-svg" viewBox="0 0 200 200" aria-hidden="true"></svg>
+    </div>
+  </div>
+
+  <div class="tri-stlpce">
+    <div class="karta"><h3>1 · Nájdi svoj dych</h3><p>Pred cvičením si niekoľko minút len dýchaš. Posuvníkom nastavíš dĺžku nádychu a výdychu, kým to nie je pohodlné. Tradične 5 s / 5 s, začiatočník 3–4 s.</p></div>
+    <div class="karta"><h3>2 · Predcvič si cviky</h3><p>Každý cvik samostatne, dvakrát-trikrát, s dýchaním. Ekam – nádych, Dve – výdych… presne tak, ako počíta učiteľ v šále.</p></div>
+    <div class="karta"><h3>3 · Cvič na televízore</h3><p>Pusti celú sekvenciu, oprie sa o tvoje tempo a beží sama. Päť pozdravov slnku A a päť B — základ každej aštanga praxe.</p></div>
+  </div>
+
+  <section id="jogovne" class="jogovne">
+    <h2>Jogovne v tvojom okolí</h2>
+    <p>Pripravujeme mapu jogovní na Slovensku a v Česku s hodnotením z Google a filtrom podľa vzdialenosti. Máš jogovňu? Napíš nám a budeš medzi prvými partnermi.</p>
+    <a class="btn" href="mailto:info@najdijogu.sk?subject=Jogov%C5%88a%20na%20najdijogu.sk">Prihlásiť jogovňu</a>
+  </section>
+
+  <footer class="pata">© 2026 najdijogu.sk · Slovensko · Česko · <a href="#" data-obr="oprogramoch">O projekte</a></footer>
+</section>
+
+<!-- DYCHOVÝ TRÉNER -->
+<section id="dych" class="obrazovka">
+  <header class="hlavicka mala"><button class="spat" data-obr="uvod">‹ Späť</button><h2>Nájdi svoj dych</h2></header>
+  <div class="dych-telo">
+    <div class="dych-kruh-obal"><div id="dych-kruh" class="dych-kruh"><span id="dych-faza">nádych</span><span id="dych-cas">5</span></div></div>
+    <div class="nastavenia">
+      <label>Nádych <output id="out-in">5,0 s</output><input id="in-nadych" type="range" min="2" max="15" step="0.5" value="5"></label>
+      <label>Výdych <output id="out-out">5,0 s</output><input id="in-vydych" type="range" min="2" max="15" step="0.5" value="5"></label>
+      <label class="prepinac"><input id="in-zamok" type="checkbox" checked> rovnaký nádych aj výdych</label>
+      <label class="prepinac"><input id="in-zvuk" type="checkbox" checked> zvuk metronómu</label>
+      <label class="prepinac"><input id="in-hlas" type="checkbox" checked> hovorený hlas (slovensky)</label>
+      <div class="akcie">
+        <button id="dych-start" class="btn primar">Dýchať</button>
+        <button class="btn" data-obr="nastavenie">Ísť cvičiť s týmto tempom ›</button>
+      </div>
+      <p class="drobne">Tradícia: Pattabhi Jois učil 10–15 s na nádych aj výdych; bežná prax je 5 s / 5 s. Nechaj si tempo, ktoré udýchaš celý pozdrav slnku.</p>
+    </div>
+  </div>
+</section>
+
+<!-- NASTAVENIE CVIČENIA -->
+<section id="nastavenie" class="obrazovka">
+  <header class="hlavicka mala"><button class="spat" data-obr="uvod">‹ Späť</button><h2>Cvičenie</h2></header>
+  <div class="nast-telo">
+    <div class="karta">
+      <h3>Čo cvičíme</h3>
+      <label class="prepinac"><input type="radio" name="sekv" value="A" checked> Surya Namaskara A (9 vinyás)</label>
+      <label class="prepinac"><input type="radio" name="sekv" value="B"> Surya Namaskara B (17 vinyás)</label>
+      <label class="prepinac"><input type="radio" name="sekv" value="AB"> A aj B za sebou (klasický začiatok praxe)</label>
+      <label>Kolá <output id="out-kola">3</output><input id="in-kola" type="range" min="1" max="5" value="3"></label>
+      <label>Dychov v psovi hlavou dole <output id="out-pes">5</output><input id="in-pes" type="range" min="1" max="8" value="5"></label>
+    </div>
+    <div class="karta">
+      <h3>Tempo</h3>
+      <p>Nádych <b id="tempo-in">5,0 s</b> · výdych <b id="tempo-out">5,0 s</b> <button class="btn mini" data-obr="dych">zmeniť</button></p>
+      <p id="odhad" class="drobne"></p>
+      <label class="prepinac"><input id="in-sanskrit" type="checkbox" checked> počítať po sanskritsky (ekam, dve, trīni…)</label>
+      <label class="prepinac"><input id="in-nazvy" type="checkbox" checked> hovoriť názvy cvikov</label>
+    </div>
+    <div class="akcie velke">
+      <button class="btn" id="btn-predcvic">Predcvičovanie <small>tablet · krok za krokom</small></button>
+      <button class="btn primar" id="btn-tv">Cvičiť <small>televízor · beží samo</small></button>
+    </div>
+  </div>
+</section>
+
+<!-- CVIČENIE -->
+<section id="cvicenie" class="obrazovka tmava">
+  <div class="cv-hore">
+    <button class="spat" id="cv-koniec">✕</button>
+    <div id="cv-progres"><div id="cv-progres-pruh"></div></div>
+    <div id="cv-kolo" class="cv-kolo">kolo 1/3</div>
+  </div>
+  <div class="cv-stred">
+    <svg id="cv-svg" viewBox="0 0 200 200" aria-label="postava"></svg>
+    <div class="cv-info">
+      <div id="cv-count" class="cv-count">ekam</div>
+      <div id="cv-nazov" class="cv-nazov">Urdhva Hastasana</div>
+      <div id="cv-nazov-sk" class="cv-nazov-sk">ruky hore</div>
+      <div id="cv-dych" class="cv-dych nadych">NÁDYCH</div>
+      <div id="cv-dris" class="cv-dris">drishti: palce</div>
+    </div>
+  </div>
+  <div class="cv-dole">
+    <div id="cv-dych-pruh"><div id="cv-dych-pruh-vnutro"></div></div>
+    <div class="cv-ovladanie">
+      <button class="btn" id="cv-prev">‹ Späť</button>
+      <button class="btn primar" id="cv-pauza">Pauza</button>
+      <button class="btn" id="cv-next">Ďalej ›</button>
+      <button class="btn" id="cv-znova" title="zopakovať tento cvik">↻ Znova</button>
+    </div>
+    <p class="drobne cv-klav">medzerník = pauza · šípky = cvik · R = znova · Esc = koniec</p>
+  </div>
+</section>
+
+<!-- O PROJEKTE -->
+<section id="oprogramoch" class="obrazovka">
+  <header class="hlavicka mala"><button class="spat" data-obr="uvod">‹ Späť</button><h2>O projekte</h2></header>
+  <div class="text-telo">
+    <p>najdijogu.sk vzniká v Banskej Bystrici z jednoduchej potreby: cvičiť aštangu doma v tempe vlastného dychu, bez videa a bez pozerania na obrazovku. Aštanga je o dychu — vinyása znamená jeden pohyb na jeden dych. Preto tu nie je učiteľ na videu, ale metronóm, ktorý si nastavíš sám, a obrysová postava, ktorú vidíš aj z gauča.</p>
+    <p>Sekvencie a počty vinyás vychádzajú z tradičného počítania (Pattabhi Jois, Sharath Jois), tak ako ho učí Ashtanga Yoga Research Institute v Mysore. Nepárne číslo je nádych, párne výdych; v psovi hlavou dole sa drží päť dychov.</p>
+    <p>Ďalej pribudne celá Primary series, česká verzia, uloženie priebehu a mapa jogovní s hodnoteniami z Google. Napíš nám: <a href="mailto:info@najdijogu.sk">info@najdijogu.sk</a>.</p>
+    <p class="drobne">Zdravotné upozornenie: joga je fyzická aktivita. Ak máš zdravotné ťažkosti, poraď sa s lekárom. Cvič bez bolesti, v rozsahu, ktorý je pre teba bezpečný.</p>
+  </div>
+</section>
+
+<script src="sekvencie.js"></script>
+<script src="postava.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

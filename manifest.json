@@ -1,0 +1,10 @@
+{
+  "name": "Najdi jogu — aštanga s dychom",
+  "short_name": "Najdi jogu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1a17",
+  "theme_color": "#0f1a17",
+  "lang": "sk",
+  "icons": [{ "src": "ikona.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
