@@ -33,8 +33,10 @@
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(hlasitost, t + .03); g.gain.exponentialRampToValueAtTime(.001, t + dur);
     o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + .05);
   };
-  const tonNadych = () => ton(330, 520, .45);
-  const tonVydych = () => ton(520, 300, .6);
+  const tonNadych = () => ton(330, 520, .45, .34);   /* hlasnejšie (pokyn 19.9.) */
+  const tonVydych = () => ton(520, 300, .6, .34);
+  /* „blomp" – krátky mäkký úder pri začiatku ďalšieho cviku */
+  const blomp = () => { ton(440, 220, .28, .4); setTimeout(() => ton(330, 165, .22, .25), 90); };
   const tik = () => ton(1200, 1200, .04, .06);
 
   /* ---------- hlas (Web Speech, sk-SK; ak nie je, ticho) ---------- */
@@ -157,12 +159,30 @@
     return prog;
   };
 
+  /* ---------- nezhasnúť obrazovku (TV šetrič) ----------
+     1. Wake Lock API (Chrome/Android TV); po návrate z pozadia sa musí požiadať znova.
+     2. Záloha: tiché slučkové video (16×16 px, 1,8 kB) – trik NoSleep, funguje aj tam, kde Wake Lock nie je. */
+  let wl = null, nespiVideo = null;
+  const drzObrazovku = () => {
+    if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(l => { wl = l; }).catch(() => {});
+    if (!nespiVideo) {
+      nespiVideo = document.createElement("video");
+      Object.assign(nespiVideo, { src: "nespi.mp4", loop: true, muted: true, playsInline: true });
+      nespiVideo.setAttribute("playsinline", ""); nespiVideo.setAttribute("muted", "");
+      nespiVideo.style.cssText = "position:fixed;width:1px;height:1px;opacity:0.01;pointer-events:none;bottom:0;right:0";
+      document.body.appendChild(nespiVideo);
+    }
+    nespiVideo.play().catch(() => {});
+  };
+  const pustiObrazovku = () => { if (wl) { wl.release().catch(() => {}); wl = null; } if (nespiVideo) nespiVideo.pause(); };
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && (wl || (nespiVideo && !nespiVideo.paused))) drzObrazovku(); });
+
   /* ---------- cvičenie ---------- */
   const cv = (() => {
     const svg = $("#cv-svg"), post = new Postava(svg, "#f3efe4");
     const elCount = $("#cv-count"), elNazov = $("#cv-nazov"), elSk = $("#cv-nazov-sk"), elDych = $("#cv-dych"), elDris = $("#cv-dris"),
           elKolo = $("#cv-kolo"), elDalej = $("#cv-dalej"), elOstava = $("#cv-ostava"), pruh = $("#cv-progres-pruh"), dPruh = $("#cv-dych-pruh-vnutro"), btnPauza = $("#cv-pauza");
-    let prog = [], i = 0, rezim = "tv", bezi = false, pauza = false, timer = null, holdTimer = null, wl = null;
+    let prog = [], i = 0, rezim = "tv", bezi = false, pauza = false, timer = null, holdTimer = null, predpovedTimer = null;
 
     const zobrazKrok = (k, ms) => {
       const ct = k.c ? COUNT[k.c] : null;
@@ -188,22 +208,27 @@
       dPruh.className = d === "in" ? "nadych" : "vydych";
       requestAnimationFrame(() => requestAnimationFrame(() => { dPruh.style.transition = `width ${ms}ms linear`; dPruh.style.width = d === "in" ? "100%" : "0%"; }));
     };
+    /* poradie hlasu (pokyn 19.9.): ~2,5 s pred ďalším cvikom povie LEN slovensky, čo príde („ďalej: predklon");
+       pri začiatku cviku „blomp" + počet + slovensky + sanskrit */
     const hovorKrok = k => {
       const ct = k.c ? COUNT[k.c] : null;
       const casti = [];
       if (ct && N.sanskrit) casti.push(ct[1]); else if (k.c) casti.push(String(k.c));
-      if (N.nazvy) { casti.push(k.sk); casti.push(k.vysl || k.san); } /* najskôr slovensky, potom sanskrit (pokyn 19.9.) */
+      if (N.nazvy) { casti.push(k.sk); casti.push(k.vysl || k.san); }
       povedz(casti, true);
     };
+    const predpovedz = () => { const d = prog[i + 1]; if (d && N.nazvy && rezim === "tv") povedz(["ďalej", d.sk]); };
 
     const spusti = () => {
       if (i >= prog.length) return koniec(true);
       const k = prog[i];
       const ms = (k.d === "in" ? N.in : N.out) * 1000;
       zobrazKrok(k, ms); dychPruh(k.d, ms);
-      if (k.d === "in") tonNadych(); else tonVydych();
+      blomp();
+      setTimeout(() => { if (k.d === "in") tonNadych(); else tonVydych(); }, 250);
       hovorKrok(k);
-      clearTimeout(timer); clearTimeout(holdTimer);
+      clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer);
+      if (!k.holdDychov && rezim === "tv") predpovedTimer = setTimeout(predpovedz, Math.max(ms * 0.5, ms - 2500));
       const poPohybe = () => {
         if (!k.holdDychov) return dalej();
         /* výdrž: n dychov, každý nádych/výdych tón + pruh */
@@ -216,6 +241,7 @@
           elDych.className = "cv-dych " + (faza === "in" ? "nadych" : "vydych");
           dychPruh(faza, d * 1000);
           if (faza === "in") tonNadych(); else tonVydych();
+          if (faza === "out" && zost === 1) predpovedTimer = setTimeout(predpovedz, Math.max(d * 500, d * 1000 - 2500));
           holdTimer = setTimeout(() => { if (faza === "out") zost--; faza = faza === "in" ? "out" : "in"; jeden(); }, d * 1000);
         };
         jeden();
@@ -235,16 +261,16 @@
       $(".cv-klav").textContent = r === "tv" ? "medzerník = pauza · šípky = cvik · R = znova · Esc = koniec" : "Ďalej = ďalší cvik · R = zopakovať · šípky · Esc = koniec";
       $("#cv-next").style.visibility = "visible";
       audio(); post.skoc("samasthiti");
-      if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(l => { wl = l; }).catch(() => {});
+      drzObrazovku();
       ukaz("cvicenie");
       povedz([SEKVENCIE[prog[0].sekv].nazov, "Samasthiti. Pripravený?"], true);
       timer = setTimeout(spusti, 2500);
     };
-    const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); zastavHlas(); };
+    const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer); zastavHlas(); pustiObrazovku(); };
     const prepniPauzu = () => {
       if (!bezi) return;
       pauza = !pauza; btnPauza.textContent = pauza ? "Pokračovať" : "Pauza";
-      if (pauza) { clearTimeout(timer); clearTimeout(holdTimer); povedz("pauza"); } else spusti();
+      if (pauza) { clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer); povedz("pauza"); } else spusti();
     };
     const skok = smer => { if (!bezi) return; i = Math.max(0, Math.min(prog.length - 1, i + smer)); pauza = false; btnPauza.textContent = "Pauza"; spusti(); };
     const znova = () => { if (!bezi) return; pauza = false; btnPauza.textContent = "Pauza"; spusti(); };
