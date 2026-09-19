@@ -167,5 +167,28 @@ function nj_vzdialenost(float $lat1, float $lng1, float $lat2, float $lng2): flo
 function nj_email(string $komu, string $predmet, string $html): bool {
     $hl = "From: Najdi jogu <info@najdijogu.sk>\r\nReply-To: info@najdijogu.sk\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=UTF-8\r\n";
     $telo = '<div style="font-family:Segoe UI,system-ui,sans-serif;max-width:600px;margin:0 auto;color:#1b2420"><div style="padding:18px 0;border-bottom:2px solid #1f6f5a"><b style="font-size:20px">najdi<span style="color:#1f6f5a">jogu</span>.sk</b></div><div style="padding:20px 0;line-height:1.55">' . $html . '</div><div style="border-top:1px solid #ddd;padding:14px 0;font-size:12px;color:#5d6963">najdijogu.sk · joga v tempe dychu · <a href="https://najdijogu.sk" style="color:#1f6f5a">najdijogu.sk</a> · <a href="mailto:info@najdijogu.sk" style="color:#1f6f5a">info@najdijogu.sk</a></div></div>';
-    return @mail($komu, '=?UTF-8?B?' . base64_encode($predmet) . '?=', $telo, $hl);
+    $predmetK = '=?UTF-8?B?' . base64_encode($predmet) . '?=';
+    /* SMTP cez schránku info@najdijogu.sk (data/smtp.txt: host;port;user;heslo) — mail() na WebSupporte bez schránky nedoručí. Bez smtp.txt → mail(). */
+    $smtp = nj_tajomstvo('smtp');
+    if ($smtp) { $ok = nj_smtp_posli($smtp, $komu, $predmetK, $hl, $telo); nj_audit('email', ['komu' => $komu, 'predmet' => $predmet, 'ok' => $ok]); return $ok; }
+    return @mail($komu, $predmetK, $telo, $hl);
+}
+/* minimálny SMTP klient (SSL 465 alebo STARTTLS 587), AUTH LOGIN; bez závislostí */
+function nj_smtp_posli(string $konf, string $komu, string $predmet, string $hl, string $telo): bool {
+    [$host, $port, $user, $heslo] = array_pad(explode(';', trim($konf), 4), 4, ''); $port = (int)$port ?: 465;
+    $ssl = $port === 465; $ctx = stream_context_create(['ssl' => ['verify_peer' => true, 'SNI_enabled' => true]]);
+    $f = @stream_socket_client(($ssl ? 'ssl://' : 'tcp://') . $host . ':' . $port, $en, $es, 15, STREAM_CLIENT_CONNECT, $ctx);
+    if (!$f) return false;
+    stream_set_timeout($f, 15);
+    $cit = function () use ($f) { $r = ''; while (($l = fgets($f, 515)) !== false) { $r .= $l; if (!isset($l[3]) || $l[3] !== '-') break; } return $r; };
+    $pis = function (string $c) use ($f, $cit) { fwrite($f, $c . "\r\n"); return $cit(); };
+    $cit();
+    $pis('EHLO najdijogu.sk');
+    if (!$ssl) { if (substr($pis('STARTTLS'), 0, 3) !== '220' || !stream_socket_enable_crypto($f, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) { fclose($f); return false; } $pis('EHLO najdijogu.sk'); }
+    $pis('AUTH LOGIN'); $pis(base64_encode($user)); if (substr($pis(base64_encode($heslo)), 0, 3) !== '235') { fclose($f); return false; }
+    $pis('MAIL FROM:<info@najdijogu.sk>'); if (substr($pis('RCPT TO:<' . $komu . '>'), 0, 3) !== '250') { fclose($f); return false; }
+    $pis('DATA');
+    $sprava = "To: $komu\r\nSubject: $predmet\r\nDate: " . date('r') . "\r\nMessage-ID: <" . bin2hex(random_bytes(8)) . "@najdijogu.sk>\r\n" . rtrim($hl) . "\r\n\r\n" . str_replace("\n.", "\n..", $telo);
+    $r = $pis($sprava . "\r\n."); $pis('QUIT'); fclose($f);
+    return substr($r, 0, 3) === '250';
 }
