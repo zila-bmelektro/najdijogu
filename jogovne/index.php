@@ -10,7 +10,7 @@ elseif ($casti) { $partner = nj_partner_podla_slugu($casti[0]); if (!$partner ||
 
 /* ---- štatistika (POST z prehliadača, bez cookies; kokpit sa nepočíta) ---- */
 if ($view === 'udalost') {
-    header('Content-Type: text/plain'); $u = preg_replace('/[^a-z_]/', '', $_POST['u'] ?? ''); $pid = preg_replace('/[^a-z0-9]/', '', $_POST['p'] ?? ''); $o = preg_replace('/[^a-z0-9]/', '', $_POST['o'] ?? '');
+    header('Content-Type: text/plain'); nj_rate_limit('udalost', 100, 60); if (nj_je_bot()) exit('ok'); $u = preg_replace('/[^a-z_]/', '', $_POST['u'] ?? ''); $pid = preg_replace('/[^a-z0-9]/', '', $_POST['p'] ?? ''); $o = preg_replace('/[^a-z0-9]/', '', $_POST['o'] ?? '');
     if ($pid && in_array($u, ['klik_web', 'klik_telefon', 'klik_rezervacia', 'klik_mapa', 'clanok_docitanie', 'clanok_klik_jogovna'], true) && nj_partner($pid)) nj_stat_zapis($pid, $u, $o);
     exit('ok');
 }

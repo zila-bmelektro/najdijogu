@@ -6,6 +6,7 @@
 //   2. Stiahne zip archív vetvy, rozbalí do sub/tmp/, prekopíruje do web/ a zmaže súbory, ktoré v repe už nie sú
 //      (chránené: obrazky/ (nahrané fotky), .git/, .htaccess-local).
 // Log: ~/najdijogu.sk/sub/deploy.log (posledných 200 riadkov). Výstup len pri chybe (cron e-mail „iba ak nie je prázdny").
+date_default_timezone_set('Europe/Bratislava');
 $repo = 'zila-bmelektro/najdijogu'; $vetva = 'main';
 $web = dirname(__DIR__) . '/web'; $sub = __DIR__; $log = $sub . '/deploy.log'; $stavF = $sub . '/deploy-stav.json';
 $chranene = ['obrazky', '.git', '.htaccess-local'];

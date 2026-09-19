@@ -125,7 +125,10 @@ function nj_audit_citaj(int $n = 200, ?string $partner = null): array {
 }
 /* ---------- štatistiky (M-STATISTIKY): denné počítadlá bez cookies ----------
    udalosti: zobrazenie_profilu, zobrazenie_v_zozname, klik_web, klik_telefon, klik_rezervacia, klik_mapa, clanok_zobrazenie, clanok_docitanie, clanok_klik_jogovna */
+/* jednoduchý filter botov pre štatistiky (M-STATISTIKY §5) */
+function nj_je_bot(): bool { return (bool)preg_match('/bot|crawl|spider|slurp|facebookexternalhit|preview|curl|wget|python|headless/i', $_SERVER['HTTP_USER_AGENT'] ?? 'x'); }
 function nj_stat_zapis(string $partnerId, string $udalost, string $objekt = ''): void {
+    if (nj_je_bot()) return;
     $d = date('Y-m-d'); $f = nj_data_dir() . "/stat/$d.json";
     $h = fopen($f . '.lock', 'c'); flock($h, LOCK_EX);
     $j = is_file($f) ? (json_decode((string)file_get_contents($f), true) ?: []) : [];
