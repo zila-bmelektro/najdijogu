@@ -27,7 +27,8 @@ a { color: var(--zelena); }
 .logo { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; display: flex; align-items: center; gap: 8px; }
 .logo b { color: var(--zelena); }
 .logo .tld { color: var(--tlmene); font-weight: 400; font-size: .9rem; }
-.logo-znak { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--okr), var(--zelena)); display: inline-block; }
+.logo-znak { width: 30px; height: 30px; display: inline-block; }
+.pata-znak { width: 28px; height: 28px; opacity: .8; margin-bottom: 8px; }
 .hlavicka-nav a { margin-left: 18px; text-decoration: none; color: var(--text); font-weight: 500; }
 .hlavicka-nav a:hover { color: var(--zelena); }
 .spat { background: none; border: 1px solid #d8d3c6; border-radius: 999px; padding: 6px 14px; font-size: .95rem; cursor: pointer; color: var(--text); }
