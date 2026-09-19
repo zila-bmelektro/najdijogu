@@ -52,8 +52,9 @@
     }
   };
   if ("speechSynthesis" in window) { najdiHlas(); speechSynthesis.onvoiceschanged = najdiHlas; }
-  $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); povedz(["ekam", "úrdhva hastásana", "ruky hore"], true); };
+  $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Názvy cvikov hovorí nahraný hlas."); };
   $("#btn-hlas-test").onclick = () => { audio(); povedz(["dve", "uttánásana", "predklon"], true); };
+  $("#btn-hlas-test2").onclick = () => { audio(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Použije sa len pre vety, ktoré nie sú nahrané."); };
   /* ---------- nahraný hlas (predrenderované klipy z Google TTS, hlas/manifest.json) ---------- */
   let KLIPY = null, klipCache = {}, fronta = [], hraAudio = null;
   fetch("hlas/manifest.json").then(r => r.ok ? r.json() : null).then(m => { KLIPY = m && m.klipy ? m.klipy : null; if (KLIPY) $("#hlas-info").textContent = "nahraný hlas: " + (m.hlas || "").replace("sk-SK-Chirp3-HD-", ""); }).catch(() => {});
