@@ -9,7 +9,8 @@
   // geokódovanie adresy (Nominatim, bez kľúča; stačí pre polohu jogovne)
   const g = document.getElementById('btn-geokod');
   if (g) g.onclick = async () => {
-    const a = document.getElementById('adresa').value.trim(); const s = document.getElementById('geo-stav'); if (!a) return;
+    let a = document.getElementById('adresa').value.trim(); const s = document.getElementById('geo-stav'); if (!a) return;
+    const m = (document.getElementById('mesto') || {}).value || ''; if (m && !a.toLowerCase().includes(m.trim().toLowerCase())) a += ', ' + m.trim(); /* bez mesta Nominatim vráti prvý zhodný názov ulice (Bratislava) */
     s.textContent = 'hľadám…';
     try {
       const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=sk,cz&q=' + encodeURIComponent(a), { headers: { 'Accept-Language': 'sk' } });

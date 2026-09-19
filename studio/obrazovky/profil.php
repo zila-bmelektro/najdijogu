@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <input type="hidden" name="csrf" value="<?= nj_csrf() ?>">
 <div class="dvojica">
   <label>Názov jogovne <input name="nazov" value="<?= h($partner['nazov']) ?>" required maxlength="80"></label>
-  <label>Mesto <input name="mesto" value="<?= h($partner['mesto']) ?>" maxlength="60"></label>
+  <label>Mesto <input name="mesto" id="mesto" value="<?= h($partner['mesto']) ?>" maxlength="60"></label>
 </div>
 <label>Adresa (ulica, číslo, PSČ, mesto) <input name="adresa" id="adresa" value="<?= h($partner['adresa']) ?>" maxlength="160"> <button type="button" class="btn mini" id="btn-geokod">Nájsť na mape</button> <span id="geo-stav" class="drobne"><?= $partner['lat'] ? 'poloha: ' . round($partner['lat'], 4) . ', ' . round($partner['lng'], 4) : 'poloha ešte nie je určená — bez nej sa jogovňa nezobrazí vo vyhľadávaní podľa okolia' ?></span></label>
 <input type="hidden" name="lat" id="lat" value="<?= h((string)$partner['lat']) ?>"><input type="hidden" name="lng" id="lng" value="<?= h((string)$partner['lng']) ?>">

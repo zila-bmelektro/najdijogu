@@ -24,3 +24,5 @@ a{color:var(--zelena)}h1{font-family:Georgia,serif;font-weight:600;font-size:1.6
 .recenzie{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.recenzia{margin:0;background:#fff;border:1px solid #eee8db;border-radius:10px;padding:10px 12px;font-size:.88rem}.recenzia b{color:var(--okr)}.recenzia footer{color:var(--tlmene);font-size:.78rem;margin-top:6px}
 details.karta summary{cursor:pointer;font-weight:600}
 @media(max-width:760px){.dvojica{grid-template-columns:1fr}.hl{gap:10px}.obsah{padding:12px}}
+
+@media(max-width:900px){.hl nav{order:3;flex-basis:100%;gap:0}.hl nav a{padding:4px 8px;font-size:.88rem}.hl .ja{margin-left:auto}}
