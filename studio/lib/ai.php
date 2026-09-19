@@ -9,17 +9,18 @@ function nj_ai_koncept(array $partner, array $clanok): ?array {
         . ". Služby: " . implode('; ', array_map(fn($s) => $s['nazov'] . ($s['cena'] ? " ({$s['cena']})" : ''), array_slice($partner['sluzby'], 0, 8)));
     $system = "Si redaktor portálu najdijogu.sk (joga na Slovensku a v Česku). Píšeš po slovensky, prirodzene, bez fráz a bez marketingového balastu, v tóne skúseného učiteľa jogy, ktorý hovorí s bežným človekom. Článok je publikovaný pod hlavičkou jogovne (autor = jogovňa), preto píš v 1. osobe množného čísla („u nás v jogovni…“) len tam, kde to dáva zmysel, inak vecne. Nevymýšľaj fakty o jogovni, ktoré nie sú v podkladoch; ak niečo nevieš, vynechaj. Žiadne zdravotné sľuby. Dĺžka 600–900 slov. Štruktúra: úvod (2–3 vety, prečo to čitateľa zaujíma), 3–5 sekcií s nadpismi h2, praktické rady, záver s pozvaním do jogovne (1–2 vety, bez nátlaku). Výstup VÝHRADNE ako JSON: {\"nadpis\": \"…\", \"perex\": \"1–2 vety\", \"html\": \"<p>…</p><h2>…</h2>…\", \"meta\": \"SEO popis do 155 znakov\"}.";
     $user = "Námet od jogovne: " . mb_substr($clanok['namet'], 0, 600) . "\n\nPodklady o jogovni: $fakty" . (!empty($clanok['poznamka']) ? "\n\nPoznámka partnera: " . mb_substr($clanok['poznamka'], 0, 600) : '');
+    set_time_limit(150);
+    /* štruktúrovaný výstup cez tool use – model musí vrátiť platný JSON podľa schémy (voľný text s JSON často padal na json_decode) */
+    $tool = ['name' => 'clanok', 'description' => 'Odovzdá hotový článok.', 'input_schema' => ['type' => 'object', 'required' => ['nadpis', 'perex', 'html', 'meta'],
+        'properties' => ['nadpis' => ['type' => 'string'], 'perex' => ['type' => 'string', 'description' => '1–2 vety, max 300 znakov'], 'html' => ['type' => 'string', 'description' => 'telo článku v HTML: p, h2, h3, ul, ol, li, strong, em, blockquote; bez nadpisu h1'], 'meta' => ['type' => 'string', 'description' => 'meta description do 160 znakov']]]];
     $ch = curl_init('https://api.anthropic.com/v1/messages');
-    curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 90,
+    curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 120,
         CURLOPT_HTTPHEADER => ['content-type: application/json', 'x-api-key: ' . $key, 'anthropic-version: 2023-06-01'],
-        CURLOPT_POSTFIELDS => json_encode(['model' => 'claude-sonnet-4-5', 'max_tokens' => 3000, 'system' => $system, 'messages' => [['role' => 'user', 'content' => $user]]])]);
-    $r = json_decode((string)curl_exec($ch), true); curl_close($ch);
-    $txt = $r['content'][0]['text'] ?? '';
-    if (!$txt) { nj_audit('ai_chyba', ['detail' => mb_substr(json_encode($r['error'] ?? $r), 0, 300)]); return null; }
-    if (preg_match('/\{.*\}/s', $txt, $m)) $txt = $m[0];
-    $j = json_decode($txt, true);
-    if (!$j || empty($j['html']) || empty($j['nadpis'])) return null;
-    // povolené značky — zvyšok preč
+        CURLOPT_POSTFIELDS => json_encode(['model' => 'claude-sonnet-4-5', 'max_tokens' => 3500, 'system' => $system, 'tools' => [$tool], 'tool_choice' => ['type' => 'tool', 'name' => 'clanok'], 'messages' => [['role' => 'user', 'content' => $user]]])]);
+    $raw = curl_exec($ch); $err = curl_error($ch); curl_close($ch);
+    $r = json_decode((string)$raw, true); $j = null;
+    foreach ($r['content'] ?? [] as $blok) if (($blok['type'] ?? '') === 'tool_use') { $j = $blok['input'] ?? null; break; }
+    if (!$j || empty($j['html']) || empty($j['nadpis'])) { nj_audit('ai_chyba', ['detail' => mb_substr($err ?: json_encode($r['error'] ?? array_slice((array)$r, 0, 3), JSON_UNESCAPED_UNICODE), 0, 300)]); return null; }
     $j['html'] = strip_tags($j['html'], '<p><h2><h3><ul><ol><li><strong><em><br><blockquote>');
     return ['nadpis' => mb_substr(strip_tags($j['nadpis']), 0, 120), 'perex' => mb_substr(strip_tags($j['perex'] ?? ''), 0, 300), 'html' => $j['html'], 'meta' => mb_substr(strip_tags($j['meta'] ?? ''), 0, 160)];
 }
