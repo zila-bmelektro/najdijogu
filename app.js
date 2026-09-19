@@ -52,14 +52,38 @@
     }
   };
   if ("speechSynthesis" in window) { najdiHlas(); speechSynthesis.onvoiceschanged = najdiHlas; }
-  $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); povedz("ekam, úrdhva hastásana, ruky hore", true); };
-  $("#btn-hlas-test").onclick = () => { audio(); povedz("dve, uttánásana, predklon", true); };
-  const povedz = (text, dolezite) => {
-    if (!N.hlas || !("speechSynthesis" in window) || !text) return;
-    if (dolezite) speechSynthesis.cancel();
+  $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); povedz(["ekam", "úrdhva hastásana", "ruky hore"], true); };
+  $("#btn-hlas-test").onclick = () => { audio(); povedz(["dve", "uttánásana", "predklon"], true); };
+  /* ---------- nahraný hlas (predrenderované klipy z Google TTS, hlas/manifest.json) ---------- */
+  let KLIPY = null, klipCache = {}, fronta = [], hraAudio = null;
+  fetch("hlas/manifest.json").then(r => r.ok ? r.json() : null).then(m => { KLIPY = m && m.klipy ? m.klipy : null; if (KLIPY) $("#hlas-info").textContent = "nahraný hlas: " + (m.hlas || "").replace("sk-SK-Chirp3-HD-", ""); }).catch(() => {});
+  const klip = text => {
+    if (!KLIPY || !KLIPY[text]) return null;
+    if (!klipCache[text]) { klipCache[text] = new Audio("hlas/" + KLIPY[text]); klipCache[text].preload = "auto"; }
+    return klipCache[text];
+  };
+  const zastavHlas = () => { fronta = []; if (hraAudio) { hraAudio.pause(); hraAudio.currentTime = 0; hraAudio = null; } if ("speechSynthesis" in window) speechSynthesis.cancel(); };
+  const hrajFrontu = () => {
+    if (hraAudio || !fronta.length) return;
+    const a = fronta.shift(); hraAudio = a;
+    a.onended = a.onerror = () => { hraAudio = null; hrajFrontu(); };
+    a.currentTime = 0; a.play().catch(() => { hraAudio = null; hrajFrontu(); });
+  };
+  const povedzPrehliadacom = text => {
+    if (!("speechSynthesis" in window)) return;
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "sk-SK"; if (hlasSK) u.voice = hlasSK; u.rate = 1; u.pitch = 1;
     speechSynthesis.speak(u);
+  };
+  /* povedz: text alebo pole textov; každý kus = klip, ak existuje, inak hlas prehliadača */
+  const povedz = (text, dolezite) => {
+    if (!N.hlas || !text) return;
+    if (dolezite) zastavHlas();
+    const kusy = Array.isArray(text) ? text : [text];
+    const chybaju = [];
+    kusy.forEach(t => { const k = klip(t); if (k) fronta.push(k); else chybaju.push(t); });
+    hrajFrontu();
+    if (chybaju.length) povedzPrehliadacom(chybaju.join(", "));
   };
 
   /* ---------- dychový tréner ---------- */
@@ -168,7 +192,7 @@
       const casti = [];
       if (ct && N.sanskrit) casti.push(ct[1]); else if (k.c) casti.push(String(k.c));
       if (N.nazvy) { casti.push(k.vysl || k.san); casti.push(k.sk); }
-      povedz(casti.join(", "), true);
+      povedz(casti, true);
     };
 
     const spusti = () => {
@@ -183,7 +207,7 @@
         if (!k.holdDychov) return dalej();
         /* výdrž: n dychov, každý nádych/výdych tón + pruh */
         let zost = k.holdDychov, faza = "in";
-        povedz(`${k.holdDychov} dychov`);
+        povedz(`${k.holdDychov} ${k.holdDychov === 1 ? "dych" : k.holdDychov < 5 ? "dychy" : "dychov"}`);
         const jeden = () => {
           if (faza === "in" && zost === 0) return dalej();
           const d = faza === "in" ? N.in : N.out;
@@ -212,10 +236,10 @@
       audio(); post.skoc("samasthiti");
       if ("wakeLock" in navigator) navigator.wakeLock.request("screen").then(l => { wl = l; }).catch(() => {});
       ukaz("cvicenie");
-      povedz(`${SEKVENCIE[prog[0].sekv].nazov}. Samasthiti. Pripravený?`, true);
+      povedz([SEKVENCIE[prog[0].sekv].nazov, "Samasthiti. Pripravený?"], true);
       timer = setTimeout(spusti, 2500);
     };
-    const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); if ("speechSynthesis" in window) speechSynthesis.cancel(); };
+    const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); zastavHlas(); };
     const prepniPauzu = () => {
       if (!bezi) return;
       pauza = !pauza; btnPauza.textContent = pauza ? "Pokračovať" : "Pauza";
