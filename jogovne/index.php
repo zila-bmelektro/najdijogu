@@ -148,7 +148,7 @@ $popisMeta = ['zoznam' => 'Nájdi jogovňu podľa polohy, štýlu a hodnotenia z
 <input name="web2" style="display:none" tabindex="-1" autocomplete="off">
 <fieldset><legend>Štýly jogy</legend><div class="chipy"><?php foreach (NJ_STYLY as $s): ?><label class="chip"><input type="checkbox" name="styly[]" value="<?= h($s) ?>" <?= in_array($s, (array)($_POST['styly'] ?? []), true) ? 'checked' : '' ?>> <?= h($s) ?></label><?php endforeach; ?></div></fieldset>
 <label>Pár viet o jogovni <textarea name="popis" rows="4" maxlength="1500"><?= h($_POST['popis'] ?? '') ?></textarea></label>
-<label class="prepinac"><input type="checkbox" name="suhlas" value="1" required> Súhlasím so zverejnením profilu jogovne na najdijogu.sk a so spracovaním kontaktných údajov na účely registrácie.</label>
+<label class="prepinac"><input type="checkbox" name="suhlas" value="1" required> Súhlasím so zverejnením profilu jogovne na najdijogu.sk, so spracovaním kontaktných údajov na účely registrácie (<a href="/pravne/ochrana-udajov.html" target="_blank">ochrana údajov</a>) a s <a href="/pravne/podmienky.html" target="_blank">podmienkami používania</a>.</label>
 <button class="btn primar">Prihlásiť jogovňu (zadarmo)</button>
 </form>
 <aside class="karta"><h2>Čo získate</h2><ul><li><b>Zadarmo:</b> profil jogovne v zozname podľa okolia, hodnotenie z Google, odkaz na web a rezervácie.</li><li><b>Partner 12 (24 €/mes., 288 €/rok):</b> zvýraznenie, služby a cenník, akcie, 4 AI články mesačne pod vašou hlavičkou, štatistiky zobrazení a klikov, recenzie z Google, 20 účtov Plus pre klientov.</li><li><b>Partner Pro (49 €/mes.):</b> + vlastná sekvencia v appke, top pozícia v meste, videá na siete.</li></ul><p class="drobne">Bez viazanosti po uplynutí 12 mesiacov — profil ostáva ako bezplatný listing. Ceny bez DPH.</p></aside>
@@ -157,6 +157,6 @@ $popisMeta = ['zoznam' => 'Nájdi jogovňu podľa polohy, štýlu a hodnotenia z
 
 <?php else: ?><h1>Nenašli sme</h1><p>Táto jogovňa alebo článok tu nie je. <a href="/jogovne/">Zoznam jogovní</a></p><?php endif; ?>
 </main>
-<footer class="pata">© <?= date('Y') ?> najdijogu.sk · Slovensko · Česko · <a href="/jogovne/pridat">Pre jogovne</a> · <a href="mailto:info@najdijogu.sk">info@najdijogu.sk</a></footer>
+<footer class="pata">© <?= date('Y') ?> najdijogu.sk · Slovensko · Česko · <a href="/jogovne/pridat">Pre jogovne</a> · <a href="/pravne/ochrana-udajov.html">Ochrana údajov</a> · <a href="/pravne/podmienky.html">Podmienky</a> · <a href="mailto:info@najdijogu.sk">info@najdijogu.sk</a></footer>
 <script src="/jogovne/jogovne.js"></script>
 </body></html>
