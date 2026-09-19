@@ -9,6 +9,8 @@ if ($p === 'prihlasenie' || !$ja) { $p = 'prihlasenie'; }
 $partner = $ja ? nj_moj_partner() : null;
 $admin = nj_je_admin($ja);
 if ($ja && $p !== 'prihlasenie' && !$partner && !$admin) $p = 'bez_partnera';
+/* admin bez vlastnej jogovne: partnerské obrazovky nemá kam ukázať → Admin */
+if ($ja && $admin && !$partner && !str_starts_with($p, 'admin') && $p !== 'prihlasenie') $p = 'admin';
 if (str_starts_with($p, 'admin') && !$admin) { http_response_code(403); $p = 'prehlad'; }
 $obrazovky = ['prihlasenie', 'bez_partnera', 'prehlad', 'profil', 'sluzby', 'clanky', 'clanok', 'statistiky', 'predplatne', 'google', 'admin', 'admin_partner', 'admin_clanky', 'admin_aktivity'];
 if (!in_array($p, $obrazovky, true)) $p = 'prehlad';
