@@ -1,7 +1,7 @@
 <?php
 /* najdijogu.sk — M-PARTNERI jadro: konfigurácia, dáta (flat-file JSON), session, CSRF, audit, štatistiky.
    Dáta žijú MIMO docrootu: ~/najdijogu.sk/data/ (partneri.json, clanky/, stat/, audit.log, cache/).
-   Tajomstvá: data/*.txt (google_oauth_client_id, google_oauth_client_secret, google_places_key, stripe_*). Nikdy v gite. */
+   Tajomstvá: data/*.txt (google_oauth_client_id, google_oauth_client_secret, google_places_key, gopay_*, smtp). Nikdy v gite. */
 declare(strict_types=1);
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Bratislava');
