@@ -1,0 +1,15 @@
+# Najdi jogu
+
+> Najdi jogu — Aštanga joga vedená dychom: nastav si tempo dýchania, obrysová postava ti predcvičí Surya Namaskara A a B, slovenský hlas povie názov cviku. Na tablete aj na televízore. Zadarmo.
+
+Prevádzkovateľ: BM Elektro, s.r.o., divízia Kollego Digital, Banská Bystrica. Ekosystém webov: https://kollego.sk/ekosystem/ekosystem.php
+
+## Hlavné časti
+
+- [Cvičenie](https://najdijogu.sk/): aplikácia priamo na úvodnej stránke
+- [Jogovne](https://najdijogu.sk/jogovne/): zoznam jogových štúdií
+- [Ochrana údajov](https://najdijogu.sk/pravne/ochrana-udajov.html) · [Podmienky](https://najdijogu.sk/pravne/podmienky.html)
+
+## Optional
+
+- [Sitemap](https://najdijogu.sk/sitemap.xml)
