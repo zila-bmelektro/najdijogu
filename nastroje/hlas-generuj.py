@@ -34,7 +34,7 @@ def texty():
           "ekam, úrdhva hastásana, ruky hore", "dve, uttánásana, predklon",
           "Nádych aj výdych rovnako dlhé. Nechaj si tempo, ktoré udýchaš.", "Posledný pohyb.", "Ešte raz.", "ďalej",
           "Stoj. Pripravený?", "Hotovo."}
-    for n in range(1, 9):
+    for n in range(1, 11):   # výdrž: pes max 8, pozícia max 10
         t.add(f"{n} {'dych' if n == 1 else 'dychy' if n < 5 else 'dychov'}")
     return sorted(t)
 

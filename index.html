@@ -31,7 +31,7 @@
 
   <div class="hero">
     <div class="hero-text">
-      <p class="nadpis-mini">Aštanga joga · Surya Namaskara A + B</p>
+      <p class="nadpis-mini">Aštanga joga · Surya Namaskara A + B · stojace pozície</p>
       <h1>Joga s dychom, ktorý <em>ti</em> sedí.</h1>
       <p class="perex">Nastav si tempo dýchania. Obrysová postava ti predcvičí každý cvik v tvojom tempe, hlas povie jeho názov a metronóm ti naznačí nádych a výdych. Na tablete si cviky predcvičíš, na televízore cvičíš bez zásahu.</p>
       <div class="akcie">
@@ -41,7 +41,7 @@
       <p class="drobne">Zadarmo · bez registrácie · funguje offline · SK/CZ</p>
     </div>
     <div class="hero-postava">
-      <svg id="hero-svg" viewBox="0 0 200 200" aria-hidden="true"></svg>
+      <svg id="hero-svg" viewBox="0 0 254 200" aria-hidden="true"></svg>
     </div>
   </div>
 
@@ -53,7 +53,7 @@
 
   <section class="dalsie">
     <h2>Čo pribudne</h2>
-    <p>Pozdravy slnku sú brána. Postupne pridávame celú Primary series tak, ako ju učil Pattabhi Jois: <b>standing</b> (Padangusthasana, trojuholníky, Prasarita, Parsvottanasana, Utthita Hasta, Utkatasana, Virabhadrasana), <b>seated</b> (Paschimottanasana, Janu Sirsasana, Marichyasana, Navasana, Baddha Konasana…), <b>backbend</b> a <b>finishing</b> (Sarvangasana, Sirsasana, Padmasana, Savasana). K tomu krátke formy na 15 / 30 / 45 minút, pránajáma, meditácia a režim „Mysore" — cvičíš po posledný cvik, ktorý už zvládaš.</p>
+    <p>Pozdravy slnku sú brána. <b>Nové: stojace pozície</b> (Padangusthasana, Padahastasana, trojuholníky, bočné uhly, Prasarita A–D, Parsvottanasana) — v Cvičení si zaškrtneš bloky a každému dáš vlastné tempo dychu. Postupne pridávame celú Primary series tak, ako ju učil Pattabhi Jois: zvyšok <b>standing</b> (Utthita Hasta, Utkatasana, Virabhadrasana), <b>seated</b> (Paschimottanasana, Janu Sirsasana, Marichyasana, Navasana, Baddha Konasana…), <b>backbend</b> a <b>finishing</b> (Sarvangasana, Sirsasana, Padmasana, Savasana). K tomu krátke formy na 15 / 30 / 45 minút, pránajáma, meditácia a režim „Mysore" — cvičíš po posledný cvik, ktorý už zvládaš.</p>
   </section>
 
   <section id="jogovne" class="jogovne">
@@ -103,21 +103,28 @@
   <div class="nast-telo">
     <div class="karta">
       <h3>Čo cvičíme</h3>
-      <label class="prepinac"><input type="radio" name="sekv" value="A" checked> Surya Namaskara A (9 vinyás)</label>
-      <label class="prepinac"><input type="radio" name="sekv" value="B"> Surya Namaskara B (17 vinyás)</label>
-      <label class="prepinac"><input type="radio" name="sekv" value="AB"> A aj B za sebou (klasický začiatok praxe)</label>
-      <label>Kolá <output id="out-kola">3</output><input id="in-kola" type="range" min="1" max="5" value="3"></label>
+      <p class="drobne">Zaškrtni bloky, cvičia sa v tomto poradí. Každý blok môže mať vlastné tempo dychu (− rýchlejšie, + pomalšie).</p>
+      <div id="bloky"></div>
+      <label>Kolá pozdravov slnku <output id="out-kola">3</output><input id="in-kola" type="range" min="1" max="5" value="3"></label>
       <label>Dychov v psovi hlavou dole <output id="out-pes">5</output><input id="in-pes" type="range" min="1" max="8" value="5"></label>
+      <label>Dychov v pozícii (stojace pozície) <output id="out-drz">5</output><input id="in-drz" type="range" min="3" max="10" value="5"></label>
     </div>
     <div class="karta">
       <h3>Tempo</h3>
-      <p>Nádych <b id="tempo-in">5,0 s</b> · výdych <b id="tempo-out">5,0 s</b> <button class="btn mini" data-obr="dych">zmeniť</button></p>
+      <p>Hlavné tempo: nádych <b id="tempo-in">5,0 s</b> · výdych <b id="tempo-out">5,0 s</b> <button class="btn mini" data-obr="dych">zmeniť</button></p>
       <p id="odhad" class="drobne"></p>
-      <h3 class="h-jazyk">Jazyk hlasu</h3>
+    </div>
+    <div class="karta">
+      <h3>Jazyk hlasu</h3>
       <label class="prepinac"><input type="radio" name="jazyk" value="sk"> <span>len slovensky <span class="drobne">(jeden, dva… · ruky hore, predklon)</span></span></label>
       <label class="prepinac"><input type="radio" name="jazyk" value="san"> <span>len <abbr title="Sanskrit – starý indický jazyk, v ktorom sa tradične pomenúvajú jogové pozície (ásany) a počíta sa vinyása">sanskrit</abbr> <span class="drobne">(ekam, dve… · úrdhva hastásana)</span></span></label>
       <label class="prepinac"><input type="radio" name="jazyk" value="oboje" checked> <span>oboje <span class="drobne">(sanskritské počítanie, názov slovensky aj sanskritom)</span></span></label>
+      <label class="prepinac"><input id="in-cislo" type="checkbox" checked> <span>hovoriť číslo <span class="drobne">(počítanie; vypnuté = len pokyn na cvik)</span></span></label>
       <label class="prepinac"><input id="in-nazvy" type="checkbox" checked> hovoriť názvy cvikov</label>
+      <h3 class="h-jazyk">Jazyk textov na obrazovke</h3>
+      <label class="prepinac"><input type="radio" name="jazykText" value="sk"> <span>len slovensky <span class="drobne">(2 · predklon · pohľad: nos)</span></span></label>
+      <label class="prepinac"><input type="radio" name="jazykText" value="san"> <span>len sanskrit <span class="drobne">(dve · Uttānāsana · drishti: nos)</span></span></label>
+      <label class="prepinac"><input type="radio" name="jazykText" value="oboje" checked> <span>oboje</span></label>
       <p id="hlas-info" class="drobne">nahraný hlas sa načítava…</p>
       <label>Náhradný hlas prehliadača (použije sa len pre vety, ktoré nie sú nahrané) <select id="in-hlas-vyber"><option value="">načítavam hlasy…</option></select></label>
       <button class="btn mini" id="btn-hlas-test">▶ vyskúšať nahraný hlas</button> <button class="btn mini" id="btn-hlas-test2">▶ vyskúšať náhradný hlas</button>
@@ -139,7 +146,7 @@
     <div id="cv-ostava" class="cv-kolo cv-ostava">ostáva —</div>
   </div>
   <div class="cv-stred">
-    <svg id="cv-svg" viewBox="0 0 200 200" aria-label="postava"></svg>
+    <svg id="cv-svg" viewBox="0 0 254 200" aria-label="postava"></svg>
     <div class="cv-info">
       <div id="cv-count" class="cv-count">ekam</div>
       <div id="cv-nazov" class="cv-nazov">Urdhva Hastasana</div>
@@ -151,6 +158,12 @@
   </div>
   <div class="cv-dole">
     <div id="cv-dych-pruh"><div id="cv-dych-pruh-vnutro"></div></div>
+    <div id="cv-volby" class="cv-volby">
+      <span class="cv-volba"><span class="cv-vl">hlas</span><button data-v="jazyk" data-h="sk" title="hlas len slovensky">SK</button><button data-v="jazyk" data-h="san" title="hlas len sanskrit (SA)">SA</button><button data-v="jazyk" data-h="oboje" title="hlas slovensky aj sanskrit">obe</button></span>
+      <span class="cv-volba"><span class="cv-vl">text</span><button data-v="jazykText" data-h="sk" title="texty len slovensky">SK</button><button data-v="jazykText" data-h="san" title="texty len sanskrit (SA)">SA</button><button data-v="jazykText" data-h="oboje" title="texty slovensky aj sanskrit">obe</button></span>
+      <span class="cv-volba"><button data-v="cislo" title="hlas hovorí číslo (počítanie); vypnuté = len pokyn na cvik">číslo</button></span>
+      <span class="cv-volba" title="tempo dychu tohto bloku cvičenia"><span class="cv-vl">dych · <span id="cv-tempo-blok"></span></span><button data-tempo-cv="-0.5" title="rýchlejšie (−0,5 s)">−</button><b id="cv-tempo">5,0 s</b><button data-tempo-cv="0.5" title="pomalšie (+0,5 s)">+</button></span>
+    </div>
     <div class="cv-ovladanie">
       <button class="btn" id="cv-prev">‹ Späť</button>
       <button class="btn primar" id="cv-pauza">Pauza</button>

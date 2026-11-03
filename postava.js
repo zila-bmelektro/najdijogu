@@ -7,7 +7,7 @@ class Postava {
     this.svg = svg;
     this.farba = farba || "currentColor";
     this.svg.innerHTML = `
-      <line class="zem" x1="10" y1="181" x2="190" y2="181"/>
+      <line class="zem" x1="4" y1="181" x2="250" y2="181"/>
       <g class="telo" fill="none" stroke="${this.farba}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
         <polyline id="nohaL" opacity=".55" stroke-width="4"/><polyline id="rukaL" opacity=".55" stroke-width="4"/>
         <line id="chrbat"/>
@@ -21,7 +21,14 @@ class Postava {
     this.kresli(this.aktualna);
   }
   klon(p) { const o = {}; for (const k in p) o[k] = [p[k][0], p[k][1]]; return o; }
-  abs(p, zrk) { const o = {}; for (const k in p) o[k] = zrk ? [200 - p[k][0], p[k][1]] : [p[k][0], p[k][1]]; return o; }
+  /* zrk: true = zrkadlo okolo stredu podložky (pohľad spredu, druhá strana); "nohy" = len výmena ľavej/pravej
+     (pohľad z boku: vpredu je druhá noha, postava ostáva na tom istom mieste podložky) */
+  abs(p, zrk) {
+    const o = {};
+    if (zrk === "nohy") { for (const k in p) o[k] = [p[k][0], p[k][1]]; for (const [a, b] of [["kL","kR"],["fL","fR"],["eL","eR"],["wL","wR"]]) [o[a], o[b]] = [o[b], o[a]]; return o; }
+    for (const k in p) o[k] = zrk ? [254 - p[k][0], p[k][1]] : [p[k][0], p[k][1]];
+    return o;
+  }
   kresli(p) {
     const pl = (id, ks) => this.el[id].setAttribute("points", ks.map(k => p[k].join(",")).join(" "));
     pl("nohaL", ["p","kL","fL"]); pl("nohaR", ["p","kR","fR"]);
@@ -30,18 +37,21 @@ class Postava {
     this.el.chrbat.setAttribute("x2", p.p[0]); this.el.chrbat.setAttribute("y2", p.p[1]);
     this.el.hlava.setAttribute("cx", p.h[0]); this.el.hlava.setAttribute("cy", p.h[1]);
   }
-  /* prejdi z TERAJŠEJ polohy do pózy za `ms` milisekúnd */
-  prejdi(nazov, ms, zrk, hotovo) {
-    const ciel = this.abs(POZY[nazov], !!zrk); if (!ciel) return;
+  /* prejdi z TERAJŠEJ polohy do pózy za `ms` milisekúnd; `cez` = medzipoloha (napr. skok: ruky na mieste, panva hore) */
+  prejdi(nazov, ms, zrk, hotovo, cez) {
+    const ciel = this.abs(POZY[nazov], zrk || false); if (!ciel) return;
     if (this.anim) cancelAnimationFrame(this.anim);
-    const od = this.klon(this.aktualna);
+    const body = [this.klon(this.aktualna)], podiel = [];
+    if (cez && POZY[cez]) { body.push(this.abs(POZY[cez], zrk || false)); podiel.push(.45); podiel.push(.55); } else podiel.push(1);
+    body.push(ciel);
     const t0 = performance.now();
     const ease = t => t < .5 ? 2*t*t : -1 + (4 - 2*t)*t;
     const krok = now => {
       const u = Math.min(1, (now - t0) / Math.max(1, ms));
-      const e = ease(u);
+      let s = 0, i = 0; while (i < podiel.length - 1 && u > s + podiel[i]) { s += podiel[i]; i++; }
+      const e = ease(Math.min(1, (u - s) / podiel[i])), od = body[i], k2 = body[i + 1];
       const p = {};
-      for (const k in ciel) p[k] = [od[k][0] + (ciel[k][0]-od[k][0])*e, od[k][1] + (ciel[k][1]-od[k][1])*e];
+      for (const k in ciel) p[k] = [od[k][0] + (k2[k][0]-od[k][0])*e, od[k][1] + (k2[k][1]-od[k][1])*e];
       this.aktualna = p;
       this.kresli(p);
       if (u < 1) this.anim = requestAnimationFrame(krok);
@@ -49,5 +59,5 @@ class Postava {
     };
     this.anim = requestAnimationFrame(krok);
   }
-  skoc(nazov, zrk) { if (this.anim) cancelAnimationFrame(this.anim); this.anim = null; this.aktualna = this.abs(POZY[nazov], !!zrk); this.kresli(this.aktualna); }
+  skoc(nazov, zrk) { if (this.anim) cancelAnimationFrame(this.anim); this.anim = null; this.aktualna = this.abs(POZY[nazov], zrk || false); this.kresli(this.aktualna); }
 }

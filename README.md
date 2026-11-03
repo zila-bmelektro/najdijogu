@@ -16,3 +16,11 @@ Projekt: `G:\Spoločné disky\CLAUDE\joga-portal\` (analýza, návrh, rozhodnuti
 
 Pôvodný zámer (neplatí):
 Hosting **WebSupport `bmelektro`**, doména pripojená štandardne, docroot `/najdijogu.sk/web`, PHP 8.5. Nasadenie z RUDY 2: `python nastroje\deploy.py` (FTPS cez `_spojenie.py` + `bm_creds`, len zmenené súbory). GitHub Pages vypnuté. Subdomény = priečinky `/najdijogu.sk/sub/<nazov>/` (studio., jogovne.).
+
+## Pokyny Bohuša k cvičeniu (3.11.2026) — dodržať pri každom novom bloku
+- **Jazyk hlasu** (len slovensky / len sanskrit / oboje) a **jazyk textov** na obrazovke zvlášť; v režime „len slovensky" ani jedno cudzie slovo (slovenské číslovky `COUNT_SK`, `nazovSk`).
+- **Číslo** (vinyása count) sa dá vypnúť → hlas povie len pokyn na cvik.
+- **Tempo dychu podľa bloku cvičenia** (`N.tempo[blok]`), meniteľné v nastavení aj počas cvičenia (−/+, klávesy + / −); H / T / C = jazyk hlasu / textov / číslo.
+- **Skoky** idú cez medzipolohu (`cez:"skok_vpred"|"skok_vzad"`), ruky ostávajú na podložke; stoj je na prednom konci podložky (x≈127, viewBox 254×200).
+- Každý vyslovený text musí mať nahraný klip (`python3 nastroje/hlas-generuj.py`), inak hovorí robotický hlas prehliadača.
+- Zadania ďalších blokov: velenie `PROJEKTY/P-2026-11-najdijogu-zaverecna-sekvencia.md`, `PROJEKTY/P-2026-11-najdijogu-kratke-jogy.md`.

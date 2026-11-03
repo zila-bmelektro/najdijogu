@@ -122,3 +122,24 @@ input[type=range] { width: 100%; margin-top: 6px; accent-color: var(--zelena); }
 /* jazyk hlasu (3.11.2026) */
 .h-jazyk { margin-top: 14px; }
 abbr[title] { cursor: help; text-decoration: underline dotted; }
+
+/* bloky cvičenia s vlastným tempom + ovládanie počas cvičenia (3.11.2026) */
+.blok { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #ece6d8; padding: 2px 0; }
+.blok:last-child { border-bottom: 0; }
+.nast-telo .karta .blok label { margin: 6px 0; }
+.blok-tempo { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.blok-tempo b { min-width: 4.6em; text-align: center; font-variant-numeric: tabular-nums; }
+button.tiche { width: 28px; height: 28px; padding: 0; border-radius: 8px; border: 1px solid #cfc9bb; background: #fff; color: var(--zelena); font-size: 1rem; line-height: 1; cursor: pointer; }
+button.tiche:hover { background: #f1ecdf; }
+.cv-volby { display: flex; flex-wrap: wrap; gap: 8px 14px; justify-content: center; margin-bottom: 12px; }
+.cv-volba { display: inline-flex; align-items: center; gap: 4px; }
+.cv-vl { color: #8fa199; font-size: .85rem; margin-right: 2px; }
+.cv-volby button { height: 28px; min-width: 28px; padding: 0 8px; border-radius: 8px; border: 1px solid #3a4a44; background: var(--tmava-2); color: #c9d4ce; font-size: .85rem; cursor: pointer; }
+.cv-volby button.zap { background: var(--zelena); border-color: var(--zelena); color: #fff; }
+.cv-volby b { min-width: 4.4em; text-align: center; color: var(--svetly-text); font-variant-numeric: tabular-nums; }
+@media (max-width: 820px) {
+  .cv-hore { flex-wrap: wrap; gap: 6px 12px; padding: 10px 16px; }
+  #cv-progres { order: 5; flex-basis: 100%; }
+  .cv-kolo { font-size: .8rem; white-space: normal; flex: 1; min-width: 0; }
+  .cv-ostava { flex: 0 0 auto; }
+}
