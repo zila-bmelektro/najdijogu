@@ -4,8 +4,9 @@
   const $$ = s => Array.from(document.querySelectorAll(s));
 
   /* ---------- nastavenia (uložené v prehliadači) ---------- */
-  const N = Object.assign({ in: 5, out: 5, zamok: true, zvuk: true, hlas: true, hlasURI: "", sekv: "A", kola: 3, pes: 5, sanskrit: true, nazvy: true },
+  const N = Object.assign({ in: 5, out: 5, zamok: true, zvuk: true, hlas: true, hlasURI: "", sekv: "A", kola: 3, pes: 5, jazyk: "oboje", nazvy: true },
     (() => { try { return JSON.parse(localStorage.getItem("nj-nast") || "{}"); } catch (e) { return {}; } })());
+  if (!["sk", "san", "oboje"].includes(N.jazyk)) N.jazyk = "oboje";
   const uloz = () => { try { localStorage.setItem("nj-nast", JSON.stringify(N)); } catch (e) {} };
   const fmt = s => s.toFixed(1).replace(".", ",") + " s";
 
@@ -55,7 +56,7 @@
   };
   if ("speechSynthesis" in window) { najdiHlas(); speechSynthesis.onvoiceschanged = najdiHlas; }
   $("#in-hlas-vyber").onchange = e => { N.hlasURI = e.target.value; uloz(); najdiHlas(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Názvy cvikov hovorí nahraný hlas."); };
-  $("#btn-hlas-test").onclick = () => { audio(); povedz(["dve", "predklon", "uttánásana"], true); };
+  $("#btn-hlas-test").onclick = () => { audio(); povedz(slovaKroku(SEKVENCIE.A.kroky[1]), true); };
   $("#btn-hlas-test2").onclick = () => { audio(); zastavHlas(); povedzPrehliadacom("Toto je náhradný hlas prehliadača. Použije sa len pre vety, ktoré nie sú nahrané."); };
   /* ---------- nahraný hlas (predrenderované klipy z Google TTS, hlas/manifest.json) ---------- */
   let KLIPY = null, klipCache = {}, fronta = [], hraAudio = null;
@@ -77,6 +78,14 @@
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "sk-SK"; if (hlasSK) u.voice = hlasSK; u.rate = 1; u.pitch = 1;
     speechSynthesis.speak(u);
+  };
+  /* jazyk hlasu (pokyn 3.11.2026): "sk" = len slovensky (slovenské číslovky + slovenský názov, žiadne cudzie slovo),
+     "san" = len sanskrit (sanskritské počítanie + sanskritský názov), "oboje" = počet sanskritom + názov slovensky aj sanskritom */
+  const slovaKroku = k => {
+    const casti = [], sk = N.jazyk === "sk", san = N.jazyk === "san";
+    if (k.c) casti.push(sk ? COUNT_SK[k.c] : COUNT[k.c][1]);
+    if (N.nazvy) { if (!san) casti.push(k.sk); if (!sk) casti.push(k.vysl || k.san); }
+    return casti;
   };
   /* povedz: text alebo pole textov; každý kus = klip, ak existuje, inak hlas prehliadača */
   const povedz = (text, dolezite) => {
@@ -131,7 +140,7 @@
     $("#in-kola").value = N.kola; $("#out-kola").textContent = N.kola;
     $("#in-pes").value = N.pes; $("#out-pes").textContent = N.pes;
     $("#tempo-in").textContent = fmt(N.in); $("#tempo-out").textContent = fmt(N.out);
-    $("#in-sanskrit").checked = N.sanskrit; $("#in-nazvy").checked = N.nazvy;
+    $$("input[name=jazyk]").forEach(r => r.checked = r.value === N.jazyk); $("#in-nazvy").checked = N.nazvy;
     const s = zostavProgram();
     const sek = s.reduce((a, k) => a + k.trvanie, 0);
     $("#odhad").textContent = `${s.length} pohybov · odhad ${Math.round(sek / 60)} min pri tomto tempe`;
@@ -139,7 +148,8 @@
   $$("input[name=sekv]").forEach(r => r.onchange = e => { N.sekv = e.target.value; uloz(); obnovNastavenie(); });
   $("#in-kola").oninput = e => { N.kola = +e.target.value; uloz(); obnovNastavenie(); };
   $("#in-pes").oninput = e => { N.pes = +e.target.value; uloz(); obnovNastavenie(); };
-  $("#in-sanskrit").onchange = e => { N.sanskrit = e.target.checked; uloz(); };
+  /* po zmene jazyka hneď ukážka, nech počuť rozdiel */
+  $$("input[name=jazyk]").forEach(r => r.onchange = e => { N.jazyk = e.target.value; uloz(); audio(); povedz(slovaKroku(SEKVENCIE.A.kroky[1]), true); });
   $("#in-nazvy").onchange = e => { N.nazvy = e.target.checked; uloz(); };
 
   /* Program = plochý zoznam pohybov (krok × kolá), každý s trvaním v sekundách */
@@ -186,7 +196,7 @@
 
     const zobrazKrok = (k, ms) => {
       const ct = k.c ? COUNT[k.c] : null;
-      elCount.textContent = ct ? (N.sanskrit ? ct[0] : String(k.c)) : "";
+      elCount.textContent = ct ? (N.jazyk === "sk" ? String(k.c) : ct[0]) : "";
       elNazov.textContent = k.san; elSk.textContent = k.sk;
       elDych.textContent = k.d === "in" ? "NÁDYCH" : "VÝDYCH";
       elDych.className = "cv-dych " + (k.d === "in" ? "nadych" : "vydych");
@@ -210,14 +220,9 @@
     };
     /* poradie hlasu (pokyn 19.9.): ~2,5 s pred ďalším cvikom povie LEN slovensky, čo príde („ďalej: predklon");
        pri začiatku cviku „blomp" + počet + slovensky + sanskrit */
-    const hovorKrok = k => {
-      const ct = k.c ? COUNT[k.c] : null;
-      const casti = [];
-      if (ct && N.sanskrit) casti.push(ct[1]); else if (k.c) casti.push(String(k.c));
-      if (N.nazvy) { casti.push(k.sk); casti.push(k.vysl || k.san); }
-      povedz(casti, true);
-    };
-    const predpovedz = () => { const d = prog[i + 1]; if (d && N.nazvy && rezim === "tv") povedz(["ďalej", d.sk]); };
+    const hovorKrok = k => povedz(slovaKroku(k), true);
+    /* predpoveď: v režime „oboje" aj „sk" slovensky (pokyn 19.9.), v režime „san" sanskritom */
+    const predpovedz = () => { const d = prog[i + 1]; if (d && N.nazvy && rezim === "tv") povedz(["ďalej", N.jazyk === "san" ? (d.vysl || d.san) : d.sk]); };
 
     const spusti = () => {
       if (i >= prog.length) return koniec(true);
@@ -252,7 +257,7 @@
     const dalej = () => { if (rezim === "tv" || prog[i].holdDychov) { i++; spusti(); } };
     const koniec = dokoncene => {
       stop();
-      if (dokoncene) { povedz("Hotovo. Samasthiti.", true); setTimeout(() => ukaz("nastavenie"), 2500); }
+      if (dokoncene) { povedz(N.jazyk === "sk" ? "Hotovo." : "Hotovo. Samasthiti.", true); setTimeout(() => ukaz("nastavenie"), 2500); }
       else ukaz("nastavenie");
     };
     const start = r => {
@@ -263,7 +268,8 @@
       audio(); post.skoc("samasthiti");
       drzObrazovku();
       ukaz("cvicenie");
-      povedz([SEKVENCIE[prog[0].sekv].nazov, "Samasthiti. Pripravený?"], true);
+      const S0 = SEKVENCIE[prog[0].sekv];
+      povedz(N.jazyk === "sk" ? [S0.nazovSk, "Stoj. Pripravený?"] : [S0.nazov, "Samasthiti. Pripravený?"], true);
       timer = setTimeout(spusti, 2500);
     };
     const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer); zastavHlas(); pustiObrazovku(); };

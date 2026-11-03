@@ -23,11 +23,15 @@ const COUNT = [
   ["pañcadaśa","pančadaša"], ["ṣoḍaśa","šódaša"], ["saptadaśa","saptadaša"],
 ];
 
+/* Slovenské číslovky pre hlas v režime „len slovensky" (bez cudzích slov) */
+const COUNT_SK = [null, "jeden","dva","tri","štyri","päť","šesť","sedem","osem","deväť","desať",
+  "jedenásť","dvanásť","trinásť","štrnásť","pätnásť","šestnásť","sedemnásť"];
+
 /* krok: c = vinyasa count, vysl = fonetický zápis pre slovenský hlas (dĺžne = dlhé samohlásky sanskritu)
    , d = 'in'|'out', poza, san = sanskrit, sk = slovensky, dr = drishti, hold = počet dychov výdrže (0 = len jeden pohyb) */
 const SEKVENCIE = {
   A: {
-    nazov: "Surya Namaskara A", vinyas: 9,
+    nazov: "Surya Namaskara A", nazovSk: "Pozdrav slnku A", vinyas: 9,
     kroky: [
       { c:1, d:"in",  poza:"urdhva_hast",  san:"Ūrdhva Hastāsana", vysl:"úrdhva hastásana",        sk:"ruky hore",                    dr:"palce" },
       { c:2, d:"out", poza:"uttanasana",   san:"Uttānāsana", vysl:"uttánásana",              sk:"predklon",                     dr:"nos" },
@@ -42,7 +46,7 @@ const SEKVENCIE = {
     ],
   },
   B: {
-    nazov: "Surya Namaskara B", vinyas: 17,
+    nazov: "Surya Namaskara B", nazovSk: "Pozdrav slnku B", vinyas: 17,
     kroky: [
       { c:1,  d:"in",  poza:"utkatasana",   san:"Utkaṭāsana", vysl:"utkatásana",             sk:"stolička, ruky hore",          dr:"palce" },
       { c:2,  d:"out", poza:"uttanasana",   san:"Uttānāsana", vysl:"uttánásana",             sk:"predklon",                     dr:"nos" },

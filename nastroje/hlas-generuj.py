@@ -1,4 +1,4 @@
-"""Predrenderuje slovenský hlas pre najdijogu.sk cez Google Cloud Text-to-Speech (Chirp3-HD).
+r"""Predrenderuje slovenský hlas pre najdijogu.sk cez Google Cloud Text-to-Speech (Chirp3-HD).
 
 Beží na RUDY 2:  python nastroje\hlas-generuj.py [--hlas sk-SK-Chirp3-HD-Aoede] [--vystup hlas]
 Kľúč: service account ~/bm-secrets/gcp_openexec_reader.json (projekt bm-elektro-analytics, API zapnuté 19.9.2026).
@@ -27,9 +27,13 @@ def texty():
     for m in re.finditer(r'vysl:"([^"]+)"', js): t.add(m.group(1))   # názvy ásan foneticky
     for m in re.finditer(r'sk:"([^"]+)"', js): t.add(m.group(1))     # slovenské názvy
     for m in re.finditer(r'nazov: "([^"]+)"', js): t.add(m.group(1)) # Surya Namaskara A/B
+    for m in re.finditer(r'nazovSk: "([^"]+)"', js): t.add(m.group(1)) # Pozdrav slnku A/B (režim len slovensky)
+    sk = re.search(r'const COUNT_SK = \[null,([^\]]+)\]', js)                # slovenské číslovky
+    if sk: t |= set(re.findall(r'"([^"]+)"', sk.group(1)))
     t |= {"nádych", "výdych", "pauza", "Hotovo. Samasthiti.", "Samasthiti. Pripravený?", "Pripravená?",
           "ekam, úrdhva hastásana, ruky hore", "dve, uttánásana, predklon",
-          "Nádych aj výdych rovnako dlhé. Nechaj si tempo, ktoré udýchaš.", "Posledný pohyb.", "Ešte raz.", "ďalej"}
+          "Nádych aj výdych rovnako dlhé. Nechaj si tempo, ktoré udýchaš.", "Posledný pohyb.", "Ešte raz.", "ďalej",
+          "Stoj. Pripravený?", "Hotovo."}
     for n in range(1, 9):
         t.add(f"{n} {'dych' if n == 1 else 'dychy' if n < 5 else 'dychov'}")
     return sorted(t)

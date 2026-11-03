@@ -10,6 +10,7 @@ import argparse, hashlib, json, sys, urllib.request
 from pathlib import Path
 KOREN = Path(__file__).resolve().parent.parent
 sys.path.insert(0, r"G:\Spoločné disky\CLAUDE\00-VELENIE\SCRIPTS")
+sys.path.insert(0, str(Path.home() / "bm-repos" / "00-velenie" / "SCRIPTS"))   # Mac / RUDY s gitom velenia (3.11.2026)
 from _spojenie import Server
 import bm_creds
 
@@ -27,12 +28,16 @@ def subory():
         yield rel, p
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--vsetko", action="store_true"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--vsetko", action="store_true")
+    ap.add_argument("--subory", nargs="+", help="nahrá len tieto súbory (relatívne ku koreňu), napr. keď .deploy-stav.json na stroji chýba")
+    a = ap.parse_args()
+    vyber = set(a.subory or [])
     stav = json.loads(STAV.read_text()) if STAV.exists() and not a.vsetko else {}
     s = Server("bmelektro.sk", "claude-bot.bmelektro.sk", bm_creds.tajomstvo("sftp_claude_bot_bmelektro"), port=22)
     n = 0
     for rel, p in subory():
         h = md5(p); k = rel.as_posix()
+        if vyber and k not in vyber: continue
         if stav.get(k) == h: continue
         s.put(str(p), f"{REMOTE}/{k}")
         stav[k] = h; n += 1

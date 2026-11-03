@@ -113,7 +113,10 @@
       <h3>Tempo</h3>
       <p>Nádych <b id="tempo-in">5,0 s</b> · výdych <b id="tempo-out">5,0 s</b> <button class="btn mini" data-obr="dych">zmeniť</button></p>
       <p id="odhad" class="drobne"></p>
-      <label class="prepinac"><input id="in-sanskrit" type="checkbox" checked> počítať po sanskritsky (ekam, dve, trīni…)</label>
+      <h3 class="h-jazyk">Jazyk hlasu</h3>
+      <label class="prepinac"><input type="radio" name="jazyk" value="sk"> <span>len slovensky <span class="drobne">(jeden, dva… · ruky hore, predklon)</span></span></label>
+      <label class="prepinac"><input type="radio" name="jazyk" value="san"> <span>len <abbr title="Sanskrit – starý indický jazyk, v ktorom sa tradične pomenúvajú jogové pozície (ásany) a počíta sa vinyása">sanskrit</abbr> <span class="drobne">(ekam, dve… · úrdhva hastásana)</span></span></label>
+      <label class="prepinac"><input type="radio" name="jazyk" value="oboje" checked> <span>oboje <span class="drobne">(sanskritské počítanie, názov slovensky aj sanskritom)</span></span></label>
       <label class="prepinac"><input id="in-nazvy" type="checkbox" checked> hovoriť názvy cvikov</label>
       <p id="hlas-info" class="drobne">nahraný hlas sa načítava…</p>
       <label>Náhradný hlas prehliadača (použije sa len pre vety, ktoré nie sú nahrané) <select id="in-hlas-vyber"><option value="">načítavam hlasy…</option></select></label>

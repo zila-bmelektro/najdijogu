@@ -67,7 +67,7 @@ a { color: var(--zelena); }
 .nastavenia label output, .karta label output { float: right; font-weight: 700; color: var(--zelena); }
 input[type=range] { width: 100%; margin-top: 6px; accent-color: var(--zelena); }
 .prepinac { font-weight: 500 !important; display: flex !important; gap: 10px; align-items: center; }
-.prepinac input { accent-color: var(--zelena); width: 18px; height: 18px; }
+.prepinac input { accent-color: var(--zelena); width: 18px; height: 18px; flex-shrink: 0; }
 
 /* nastavenie */
 .nast-telo { max-width: 800px; margin: 0 auto; padding: 8px 24px 48px; display: grid; gap: 18px; }
@@ -118,3 +118,7 @@ input[type=range] { width: 100%; margin-top: 6px; accent-color: var(--zelena); }
 .cv-dalej { margin-top: 18px; color: #c9d4ce; font-size: clamp(.95rem, 1.8vw, 1.35rem); border-left: 3px solid var(--okr); padding-left: 12px; }
 .cv-ostava { color: #c9a24a; }
 .nast-telo select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #cfc9bb; background: #fff; font-size: 1rem; margin-top: 6px; }
+
+/* jazyk hlasu (3.11.2026) */
+.h-jazyk { margin-top: 14px; }
+abbr[title] { cursor: help; text-decoration: underline dotted; }
