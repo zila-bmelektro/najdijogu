@@ -24,3 +24,10 @@ Hosting **WebSupport `bmelektro`**, doména pripojená štandardne, docroot `/na
 - **Skoky** idú cez medzipolohu (`cez:"skok_vpred"|"skok_vzad"`), ruky ostávajú na podložke; stoj je na prednom konci podložky (x≈127, viewBox 254×200).
 - Každý vyslovený text musí mať nahraný klip (`python3 nastroje/hlas-generuj.py`), inak hovorí robotický hlas prehliadača.
 - Zadania ďalších blokov: velenie `PROJEKTY/P-2026-11-najdijogu-zaverecna-sekvencia.md`, `PROJEKTY/P-2026-11-najdijogu-kratke-jogy.md`.
+
+## Krátke cvičenia (fáza 1, 4.11.2026)
+- Programy `CHRBAT`, `VECER`, `KANCELARIA`, `DYCH` na konci `SEKVENCIE` (`kratky:true`) — nie sú v zozname blokov aštangy, spúšťa ich dlaždica v sekcii `#kratke` na úvode (1 klik = len ten program s jeho tempom `tempo:{in,out}`).
+- Krok `d:"volne"` = pohyb bez väzby na dych (`trv` = počet voľných dychov, 1 voľný dych = priemer nádychu a výdychu tempa bloku); výdrže `hold` sú v krátkych programoch vo voľnom dychu bez tónov.
+- Opakovanie = skupina `{ opak, hovor, tip, kroky:[…] }` (napr. mačka–krava 8×); od 2. opakovania hlas povie len `kr`, po `hovor` opakovaniach už len tóny; `ticho:true` = krok sa nehovorí; `tip` sa len zobrazí.
+- Pózy: voliteľný bod `s` (stred chrbta, oblúk pri mačke/krave), stolička cez `REKVIZITY` + `REKVIZITY_TVAR`. Náhľad `_film.html` rozvinie skupiny 2×.
+- Texty, zostavy a bezpečnostné upozornenie: len podľa velenia `PROJEKTY/P-2026-11-najdijogu-kratke-jogy.md` §1a–§3 (žiadne zdravotné sľuby).
