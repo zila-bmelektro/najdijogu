@@ -155,12 +155,19 @@
     const T = tempoB(b), n = x => Math.min(12, Math.max(1.5, Math.round((x + d) * 2) / 2));
     N.tempo[b] = { in: n(T.in), out: n(T.out) }; uloz();
   };
+  /* bezpečnosť pri blokoch (NCCIH, Yoga: Effectiveness and Safety — začiatočníkom neodporúča stoj na hlave, stoj na lopatkách
+     a lotos; úpravu si vyžaduje napr. vysoký tlak a glaukóm; v tehotenstve nie dlhé ležanie na chrbte) */
+  const NCCIH = `<a href="https://www.nccih.nih.gov/health/yoga-effectiveness-and-safety" target="_blank" rel="noopener"><abbr title="National Center for Complementary and Integrative Health – americký štátny ústav pre doplnkovú a integratívnu medicínu">NCCIH</abbr></a>`;
+  const UPOZORNENIA = {
+    inverzie: `Obsahuje <abbr title="inverzia = poloha hlavou dole: stoj na lopatkách a stoj na hlave">inverzie</abbr> a lotos — cvič ich len so skúsenosťou, ideálne pod vedením učiteľa; začiatočníkom ich ${NCCIH} neodporúča. Pri vysokom krvnom tlaku, glaukóme, poranení krku, kolien alebo chrbta a v tehotenstve inverzie vynechaj a zvoľ „Záver bez inverzií“.`,
+    lotos: `Lotos (prekrížené nohy) netlač cez bolesť kolien, stačí obyčajný sed so skríženými nohami; začiatočníkom ho ${NCCIH} neodporúča. V tehotenstve skráť ležanie na chrbte.`,
+  };
   const vykresliBloky = () => {
     const el = $("#bloky"); if (!el) return;
     el.innerHTML = BLOKY.map(b => {
       const S = SEKVENCIE[b], vlastne = !!N.tempo[b];
       return `<div class="blok"><label class="prepinac"><input type="checkbox" data-blok="${b}"${N.bloky.includes(b) ? " checked" : ""}>
-        <span>${nazovBloku(S, N.jazykText)} <span class="drobne">(${S.popis})</span></span></label>
+        <span>${nazovBloku(S, N.jazykText)} <span class="drobne">(${S.popis})</span></span></label>${S.upozornenie && UPOZORNENIA[S.upozornenie] ? `<p class="drobne blok-upoz">⚠ ${UPOZORNENIA[S.upozornenie]}</p>` : ""}
         <div class="blok-tempo"><span class="drobne">dych</span><button class="tiche" data-tempo="${b}" data-d="-0.5" title="rýchlejšie dýchanie (kratší nádych aj výdych o 0,5 s)">−</button><b>${fmtT(tempoB(b))}</b><button class="tiche" data-tempo="${b}" data-d="0.5" title="pomalšie dýchanie (dlhší nádych aj výdych o 0,5 s)">+</button>${vlastne ? `<button class="tiche" data-tempo-reset="${b}" title="späť na hlavné tempo z Dýchania (${fmtT({ in: N.in, out: N.out })})">↺</button>` : `<span class="drobne">hlavné</span>`}</div></div>`;
     }).join("");
   };
@@ -173,6 +180,9 @@
     const c = e.target.closest("#bloky input[data-blok]"); if (!c) return;
     const zvolene = $$("#bloky input[data-blok]").filter(x => x.checked).map(x => x.dataset.blok);
     if (!zvolene.length) { c.checked = true; return; }   /* aspoň jeden blok */
+    /* záverečná sekvencia s inverziami a bez nich sa vylučujú (obe končia savasanou) */
+    const vylucne = { ZAVER: "ZAVER_BEZ", ZAVER_BEZ: "ZAVER" }[c.dataset.blok];
+    if (c.checked && vylucne && zvolene.includes(vylucne)) zvolene.splice(zvolene.indexOf(vylucne), 1);
     N.bloky = zvolene; uloz(); obnovNastavenie();
   });
   const obnovNastavenie = () => {
@@ -206,11 +216,16 @@
         S.kroky.forEach(k => {
           const x = { ...k, sekv: b, kolo, kolaSpolu: kol };
           x.holdDychov = dychovVydrze(x);
-          const T = tempoB(b);
-          x.trvanie = dlzka(x) + x.holdDychov * (T.in + T.out);
           prog.push(x);
         });
       }
+    });
+    /* výdrž = striedanie fáz po pohybe (prvá je opačná k pohybu); končí tak, aby ďalší krok nadviazal opačnou fázou:
+       2n fáz, alebo 2n − 1, keď ďalší krok ide tou istou fázou ako pohyb (napr. pluh → kolená k ušiam, oboje výdych) */
+    prog.forEach((x, j) => {
+      const T = tempoB(x.sekv), d2 = prog[j + 1];
+      x.holdFaz = x.holdDychov ? 2 * x.holdDychov - (d2 && d2.d === x.d ? 1 : 0) : 0;
+      x.trvanie = dlzka(x) + x.holdDychov * (T.in + T.out) - (x.holdFaz % 2 ? (x.d === "in" ? T.in : T.out) : 0);
     });
     return prog;
   };
@@ -261,9 +276,11 @@
       const ostava = prog.length - i - 1;
       elOstava.textContent = `ostáva ${ostava} ${ostava === 1 ? "pohyb" : ostava < 5 && ostava > 0 ? "pohyby" : "pohybov"}`;
       pruh.style.width = (100 * i / prog.length) + "%";
-      /* predcvičovanie: každý cvik sa ukáže od základného postoja bloku; cvičenie: nadväzuje na predchádzajúci */
-      if (rezim === "predcvic") post.skoc(SEKVENCIE[k.sekv].zaciatok || "samasthiti");
-      post.prejdi(k.poza, ms * 0.85, k.zrkadlo, null, rezim === "predcvic" ? null : k.cez);
+      /* predcvičovanie: každý cvik sa ukáže od základného postoja bloku (blok s `nadvazuje` = od predchádzajúceho cviku,
+         napr. záverečná sekvencia v ľahu); cvičenie: nadväzuje na predchádzajúci */
+      const S = SEKVENCIE[k.sekv], pred = prog[i - 1], odPred = S.nadvazuje && pred && pred.sekv === k.sekv;
+      if (rezim === "predcvic") { if (odPred) post.skoc(pred.poza, pred.zrkadlo); else post.skoc(S.zaciatok || "samasthiti"); }
+      post.prejdi(k.poza, ms * 0.85, k.zrkadlo, null, rezim === "predcvic" && !odPred ? null : k.cez);
     };
     /* ovládanie počas cvičenia: jazyk hlasu, jazyk textov, číslo, tempo dychu aktuálneho bloku */
     const ovladanie = () => {
@@ -308,17 +325,18 @@
       const poPohybe = () => {
         if (!k.holdDychov) return dalej();
         /* výdrž: n dychov, každý nádych/výdych tón + pruh */
-        let zost = k.holdDychov, faza = "in";
+        const prva = k.d === "in" ? "out" : "in";
+        let zost = k.holdDychov, faza = prva, odohrane = 0;
         povedz(`${k.holdDychov} ${k.holdDychov === 1 ? "dych" : k.holdDychov < 5 ? "dychy" : "dychov"}`);
         const jeden = () => {
-          if (faza === "in" && zost === 0) return dalej();
+          if (odohrane >= k.holdFaz) return dalej();
           const T = tempoB(k.sekv), d = faza === "in" ? T.in : T.out;   /* zmena tempa počas výdrže platí hneď od ďalšieho dychu */
           elDych.textContent = (faza === "in" ? "NÁDYCH" : "VÝDYCH") + `  ${zost}`;
           elDych.className = "cv-dych " + (faza === "in" ? "nadych" : "vydych");
           dychPruh(faza, d * 1000);
           if (faza === "in") tonNadych(); else tonVydych();
-          if (faza === "out" && zost === 1) predpovedTimer = setTimeout(predpovedz, Math.max(d * 500, d * 1000 - 2500));
-          holdTimer = setTimeout(() => { if (faza === "out") zost--; faza = faza === "in" ? "out" : "in"; jeden(); }, d * 1000);
+          if (odohrane === k.holdFaz - 1) predpovedTimer = setTimeout(predpovedz, Math.max(d * 500, d * 1000 - 2500));
+          holdTimer = setTimeout(() => { odohrane++; if (faza !== prva) zost--; faza = faza === "in" ? "out" : "in"; jeden(); }, d * 1000);
         };
         jeden();
       };
@@ -328,7 +346,7 @@
     const dalej = () => { if (rezim === "tv" || prog[i].holdDychov) { i++; spusti(); } };
     const koniec = dokoncene => {
       stop();
-      if (dokoncene) { povedz(N.jazyk === "sk" ? "Hotovo." : "Hotovo. Samasthiti.", true); setTimeout(() => ukaz("nastavenie"), 2500); }
+      if (dokoncene) { povedz(N.jazyk === "sk" || (prog[prog.length - 1] || {}).poza === "savasana" ? "Hotovo." : "Hotovo. Samasthiti.", true); setTimeout(() => ukaz("nastavenie"), 2500); }
       else ukaz("nastavenie");
     };
     const start = r => {

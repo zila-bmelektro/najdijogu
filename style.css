@@ -127,6 +127,7 @@ abbr[title] { cursor: help; text-decoration: underline dotted; }
 .blok { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #ece6d8; padding: 2px 0; }
 .blok:last-child { border-bottom: 0; }
 .nast-telo .karta .blok label { margin: 6px 0; }
+.blok-upoz { flex-basis: 100%; order: 3; margin: 0 0 8px; color: #7a4e00; line-height: 1.4; }
 .blok-tempo { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .blok-tempo b { min-width: 4.6em; text-align: center; font-variant-numeric: tabular-nums; }
 button.tiche { width: 28px; height: 28px; padding: 0; border-radius: 8px; border: 1px solid #cfc9bb; background: #fff; color: var(--zelena); font-size: 1rem; line-height: 1; cursor: pointer; }

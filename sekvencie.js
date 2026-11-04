@@ -36,6 +36,31 @@ const POZY = {
   /* medzipolohy skokov (ruky zostávajú na podložke, panva hore) — pohyb ide cez ne, nie priamo */
   skok_vpred:  { h:[156,138], n:[143,127], p:[128,74],  eL:[141,154], wL:[140,180], eR:[148,154], wR:[148,180], kL:[103,98],  fL:[82,124],  kR:[107,96],  fR:[86,122] },
   skok_vzad:   { h:[156,140], n:[143,128], p:[106,100], eL:[141,154], wL:[140,180], eR:[148,154], wR:[148,180], kL:[70,106],  fL:[33,112],  kR:[74,104],  fR:[37,110] },
+  /* záverečná sekvencia (4.11.2026): ľah na chrbte z boku = hlava vľavo, nohy vpravo (sed po skoku cez ruky
+     má nohy vpredu = vpravo; kotúľ dozadu cez hlavu potom dopadne do nízkeho kliku hlavou vpravo ako v pozdrave slnku) */
+  skok_cez:    { h:[160,124], n:[147,128], p:[116,132], eL:[143,155], wL:[142,180], eR:[150,155], wR:[150,180], kL:[138,146], fL:[120,162], kR:[141,144], fR:[123,160] },
+  dandasana:   { h:[130,104], n:[129,118], p:[128,170], eL:[126,146], wL:[132,174], eR:[132,146], wR:[138,174], kL:[165,172], fL:[202,170], kR:[167,170], fR:[205,168] },
+  lah:         { h:[62,171],  n:[76,173],  p:[128,173], eL:[100,176], wL:[122,177], eR:[102,174], wR:[125,175], kL:[165,174], fL:[202,173], kR:[167,172], fR:[205,171] },
+  savasana:    { h:[62,171],  n:[76,173],  p:[128,173], eL:[98,170],  wL:[118,165], eR:[100,176], wR:[124,178], kL:[165,174], fL:[203,170], kR:[167,172], fR:[206,168] },
+  sarvanga:    { h:[62,172],  n:[78,174],  p:[84,122],  eL:[98,176],  wL:[90,140],  eR:[102,174], wR:[93,143],  kL:[85,85],   fL:[86,47],   kR:[89,85],   fR:[90,48]  },
+  halasana:    { h:[62,172],  n:[78,174],  p:[80,118],  eL:[104,178], wL:[128,178], eR:[106,176], wR:[130,176], kL:[54,146],  fL:[28,175],  kR:[58,144],  fR:[32,173] },
+  karnapida:   { h:[62,172],  n:[78,174],  p:[78,124],  eL:[104,178], wL:[128,178], eR:[106,176], wR:[130,176], kL:[54,160],  fL:[30,176],  kR:[58,158],  fR:[34,174] },
+  padma_lop:   { h:[62,172],  n:[78,174],  p:[84,122],  eL:[98,176],  wL:[90,140],  eR:[102,174], wR:[93,143],  kL:[98,90],   fL:[80,104],  kR:[74,92],   fR:[92,106] },
+  urdhva_padma:{ h:[62,172],  n:[78,174],  p:[94,128],  eL:[68,153],  wL:[60,132],  eR:[72,151],  wR:[64,128],  kL:[58,126],  fL:[84,118],  kR:[62,122],  fR:[88,122] },
+  pindasana:   { h:[62,172],  n:[78,174],  p:[86,122],  eL:[66,166],  wL:[58,148],  eR:[70,164],  wR:[62,145],  kL:[58,150],  fL:[78,134],  kR:[62,146],  fR:[82,130] },
+  matsya:      { h:[64,172],  n:[80,148],  p:[128,172], eL:[98,178],  wL:[134,162], eR:[102,176], wR:[138,160], kL:[166,174], fL:[138,162], kR:[170,170], fR:[142,158] },
+  uttana_pad:  { h:[64,172],  n:[78,156],  p:[128,172], eL:[96,140],  wL:[116,124], eR:[98,142],  wR:[118,126], kL:[156,145], fL:[184,118], kR:[158,147], fR:[186,120] },
+  kotul:       { h:[66,172],  n:[78,170],  p:[74,122],  eL:[86,150],  wL:[70,178],  eR:[90,152],  wR:[74,178],  kL:[48,140],  fL:[22,172],  kR:[52,138],  fR:[26,170] },
+  sirsa_prep:  { h:[142,160], n:[130,152], p:[92,140],  eL:[128,178], wL:[150,178], eR:[132,176], wR:[154,176], kL:[94,178],  fL:[60,178],  kR:[98,176],  fR:[64,176] },
+  sirsa_hlava: { h:[134,171], n:[130,158], p:[112,106], eL:[116,178], wL:[138,174], eR:[120,176], wR:[142,172], kL:[90,140],  fL:[70,178],  kR:[94,138],  fR:[74,176] },
+  sirsasana:   { h:[130,171], n:[130,158], p:[130,105], eL:[116,178], wL:[136,172], eR:[120,176], wR:[140,170], kL:[128,68],  fL:[128,30],  kR:[133,68],  fR:[133,31] },
+  urdhva_dand: { h:[132,171], n:[134,158], p:[142,108], eL:[118,178], wL:[138,172], eR:[122,176], wR:[142,170], kL:[106,106], fL:[68,106],  kR:[106,110], fR:[68,110] },
+  balasana:    { h:[148,172], n:[134,166], p:[92,160],  eL:[112,174], wL:[90,178],  eR:[116,172], wR:[94,176],  kL:[118,176], fL:[86,178],  kR:[122,174], fR:[90,176] },
+  stvornozka:  { h:[160,118], n:[146,124], p:[96,130],  eL:[146,152], wL:[146,180], eR:[152,152], wR:[152,180], kL:[96,176],  fL:[62,178],  kR:[100,174], fR:[66,176] },
+  padmasana:   { h:[130,104], n:[129,118], p:[128,170], eL:[138,146], wL:[160,166], eR:[142,146], wR:[164,164], kL:[166,174], fL:[140,164], kR:[170,170], fR:[144,160] },
+  baddha_padma:{ h:[132,104], n:[130,118], p:[128,170], eL:[112,140], wL:[120,162], eR:[116,142], wR:[126,164], kL:[166,174], fL:[140,164], kR:[170,170], fR:[144,160] },
+  yoga_mudra:  { h:[180,170], n:[166,160], p:[128,170], eL:[134,140], wL:[124,162], eR:[138,142], wR:[130,164], kL:[166,176], fL:[140,166], kR:[170,172], fR:[144,162] },
+  utpluthih:   { h:[146,98],  n:[140,112], p:[126,156], eL:[150,142], wL:[158,179], eR:[154,142], wR:[162,179], kL:[166,156], fL:[138,148], kR:[170,152], fR:[142,144] },
 };
 
 /* Sanskritské číslovky: zápis + fonetický tvar pre slovenský hlas */
@@ -50,6 +75,30 @@ const COUNT = [
 /* Slovenské číslovky pre hlas v režime „len slovensky" (bez cudzích slov) */
 const COUNT_SK = [null, "jeden","dva","tri","štyri","päť","šesť","sedem","osem","deväť","desať",
   "jedenásť","dvanásť","trinásť","štrnásť","pätnásť","šestnásť","sedemnásť"];
+
+/* záverečná sekvencia: úvodná vinyása 1–7 (pozdrav slnku po psa hlavou dole a skok cez ruky do sedu)
+   a lotosová časť Baddha Padmasana → Savasana — spoločné pre ZAVER aj ZAVER_BEZ */
+const ZAVER_UVOD = (san, vysl) => [
+  { c:1, d:"in",  poza:"urdhva_hast",  san:"Ūrdhva Hastāsana", vysl:"úrdhva hastásana", sk:"ruky hore", dr:"palce" },
+  { c:2, d:"out", poza:"uttanasana",   san:"Uttānāsana", vysl:"uttánásana", sk:"predklon", dr:"nos" },
+  { c:3, d:"in",  poza:"ardha_utt",    san:"Ardha Uttānāsana", vysl:"ardha uttánásana", sk:"hlava hore, rovný chrbát", dr:"tretie oko" },
+  { c:4, d:"out", poza:"chaturanga", cez:"skok_vzad", san:"Chaturaṅga Daṇḍāsana", vysl:"čaturanga dandásana", sk:"nízky klik", dr:"nos" },
+  { c:5, d:"in",  poza:"urdhva_mukha", san:"Ūrdhva Mukha Śvānāsana", vysl:"úrdhva mukha švánásana", sk:"pes hlavou hore", dr:"tretie oko" },
+  { c:6, d:"out", poza:"adho_mukha",   san:"Adho Mukha Śvānāsana", vysl:"adho mukha švánásana", sk:"pes hlavou dole", dr:"pupok" },
+  { c:7, d:"in",  poza:"dandasana", cez:"skok_cez", san, vysl, sk:"skok cez ruky do sedu", dr:"nos" },
+];
+const ZAVER_LOTOS = [
+  { c:0, d:"out", poza:"padmasana", san:"Baddha Padmāsana", vysl:"baddha padmásana", sk:"prekrížené nohy do lotosu", dr:"nos" },
+  { c:8, d:"in", poza:"baddha_padma", san:"Baddha Padmāsana", vysl:"baddha padmásana", sk:"ruky za chrbtom chytia palce na nohách", dr:"nos", hold:"drz" },
+  { c:9, d:"out", poza:"yoga_mudra", san:"Yoga Mudrā", vysl:"jóga mudrá", sk:"predklon v lotose, brada k zemi", dr:"tretie oko", hold:"drz" },
+  { c:8, d:"in", poza:"padmasana", san:"Padmāsana", vysl:"padmásana", sk:"vzpriam sa, dlane na kolená", dr:"nos", hold:10 },
+  { c:9, d:"in", poza:"utpluthih", san:"Utpluthiḥ", vysl:"utpluti", sk:"zdvihni sa na rukách", dr:"nos", hold:10 },
+  { c:10, d:"out", poza:"chaturanga", cez:"skok_vzad", san:"Chaturaṅga Daṇḍāsana", vysl:"čaturanga dandásana", sk:"skok späť, nízky klik", dr:"nos" },
+  { c:11, d:"in", poza:"urdhva_mukha", san:"Ūrdhva Mukha Śvānāsana", vysl:"úrdhva mukha švánásana", sk:"pes hlavou hore", dr:"tretie oko" },
+  { c:12, d:"out", poza:"adho_mukha", san:"Adho Mukha Śvānāsana", vysl:"adho mukha švánásana", sk:"pes hlavou dole", dr:"pupok" },
+  { c:7, d:"in", poza:"dandasana", cez:"skok_cez", san:"Śavāsana", vysl:"šavásana", sk:"skok cez ruky do sedu", dr:"nos" },
+  { c:0, d:"out", poza:"savasana", san:"Śavāsana", vysl:"šavásana", sk:"ľahni si, dlane hore, oči zatvorené, dýchaj voľne", dr:"oči zatvorené", hold:30 },
+];
 
 /* krok: c = vinyasa count, vysl = fonetický zápis pre slovenský hlas (dĺžne = dlhé samohlásky sanskritu)
    , d = 'in'|'out', poza, san = sanskrit, sk = slovensky, dr = drishti, hold = počet dychov výdrže (0 = len jeden pohyb) */
@@ -163,6 +212,53 @@ const SEKVENCIE = {
       { c:4, d:"out", poza:"parsvo", san:"Pārśvottānāsana", vysl:"páršvottánásana", sk:"predklon nad ľavú nohu", dr:"nos", hold:"drz", zrkadlo:"nohy" },
       { c:5, d:"in", poza:"parsvo_hore", san:"Pārśvottānāsana", vysl:"páršvottánásana", sk:"vzpriam sa", dr:"nos" },
       { c:0, d:"out", poza:"samasthiti", san:"Samasthitiḥ", vysl:"samasthiti", sk:"stoj", dr:"nos" },
+    ],
+  },
+  ZAVER: {
+    /* záverečná sekvencia (finishing) — moderný reťazený count (M. J. Hall, Didi von Deck, AYI 2015; overené 3.11.2026,
+       velenie PROJEKTY/P-2026-11-najdijogu-zaverecna-sekvencia.md). Reťaz Sarvangasana → Chakrasana bez vinyásy,
+       výdrže 10 dychov (Sarvangasana, Sirsasana, Padmasana, Utpluthih), ostatné N.drz (tradične 5). */
+    nazov: "Záverečná sekvencia", nazovSk: "Záverečná sekvencia", popis: "16 pozícií, s inverziami", kola: false, zaciatok: "samasthiti", nadvazuje: true,
+    upozornenie: "inverzie",
+    kroky: [
+      ...ZAVER_UVOD("Sālamba Sarvāṅgāsana", "sálamba sarvángásana"),
+      { c:0, d:"out", poza:"lah", san:"Sālamba Sarvāṅgāsana", vysl:"sálamba sarvángásana", sk:"ľahni si na chrbát", dr:"nos" },
+      { c:8, d:"in", poza:"sarvanga", san:"Sālamba Sarvāṅgāsana", vysl:"sálamba sarvángásana", sk:"stoj na lopatkách, dlane podopierajú chrbát", dr:"nos", hold:10 },
+      { c:0, d:"out", poza:"halasana", san:"Halāsana", vysl:"halásana", sk:"pluh, nohy za hlavu na zem", dr:"nos", hold:"drz" },
+      { c:0, d:"out", poza:"karnapida", san:"Karṇapīḍāsana", vysl:"karnapídásana", sk:"kolená k ušiam", dr:"nos", hold:"drz" },
+      { c:0, d:"in", poza:"sarvanga", san:"Ūrdhva Padmāsana", vysl:"úrdhva padmásana", sk:"nohy späť hore", dr:"nos" },
+      { c:0, d:"out", poza:"padma_lop", san:"Ūrdhva Padmāsana", vysl:"úrdhva padmásana", sk:"prekrížené nohy do lotosu", dr:"nos" },
+      { c:9, d:"in", poza:"urdhva_padma", san:"Ūrdhva Padmāsana", vysl:"úrdhva padmásana", sk:"lotos na lopatkách, dlane pod kolená", dr:"nos", hold:"drz" },
+      { c:0, d:"out", poza:"pindasana", san:"Piṇḍāsana", vysl:"pindásana", sk:"lotos k hrudi, objím stehná", dr:"nos", hold:"drz" },
+      { c:0, d:"in", poza:"matsya", san:"Matsyāsana", vysl:"macjásana", sk:"ryba, temeno na zem, drž chodidlá", dr:"tretie oko", hold:"drz" },
+      { c:8, d:"in", poza:"uttana_pad", san:"Uttāna Pādāsana", vysl:"uttána pádásana", sk:"temeno na zemi, rovné nohy a ruky šikmo hore", dr:"tretie oko", hold:"drz" },
+      { c:0, d:"out", poza:"lah", san:"Chakrāsana", vysl:"čakrásana", sk:"ľahni si na chrbát", dr:"nos" },
+      { c:9, d:"in", poza:"kotul", san:"Chakrāsana", vysl:"čakrásana", sk:"kotúľ dozadu cez hlavu", dr:"nos" },
+      { c:0, d:"out", poza:"chaturanga", san:"Chaturaṅga Daṇḍāsana", vysl:"čaturanga dandásana", sk:"nízky klik", dr:"nos" },
+      { c:10, d:"in", poza:"urdhva_mukha", san:"Ūrdhva Mukha Śvānāsana", vysl:"úrdhva mukha švánásana", sk:"pes hlavou hore", dr:"tretie oko" },
+      { c:11, d:"out", poza:"adho_mukha", san:"Adho Mukha Śvānāsana", vysl:"adho mukha švánásana", sk:"pes hlavou dole", dr:"pupok" },
+      { c:7, d:"in", poza:"sirsa_prep", san:"Śīrṣāsana", vysl:"šíršásana", sk:"kolená a predlaktia na zem, prepleť prsty", dr:"nos" },
+      { c:0, d:"out", poza:"sirsa_hlava", san:"Śīrṣāsana", vysl:"šíršásana", sk:"temeno na zem, nohy prejdi bližšie", dr:"nos" },
+      { c:8, d:"in", poza:"sirsasana", san:"Śīrṣāsana", vysl:"šíršásana", sk:"stoj na hlave, nohy rovno hore", dr:"nos", hold:10 },
+      { c:9, d:"out", poza:"urdhva_dand", san:"Ūrdhva Daṇḍāsana", vysl:"úrdhva dandásana", sk:"nohy vodorovne", dr:"pupok", hold:"drz" },
+      { c:0, d:"in", poza:"sirsasana", san:"Śīrṣāsana", vysl:"šíršásana", sk:"nohy späť hore", dr:"nos" },
+      { c:10, d:"out", poza:"balasana", cez:"sirsa_hlava", san:"Bālāsana", vysl:"bálásana", sk:"nohy dolu, sed na päty, čelo na zem", dr:"nos", hold:"drz" },
+      { c:0, d:"in", poza:"stvornozka", san:"Bālāsana", vysl:"bálásana", sk:"dlane na zem, zdvihni sa", dr:"nos" },
+      { c:11, d:"out", poza:"chaturanga", san:"Chaturaṅga Daṇḍāsana", vysl:"čaturanga dandásana", sk:"skok späť, nízky klik", dr:"nos" },
+      { c:12, d:"in", poza:"urdhva_mukha", san:"Ūrdhva Mukha Śvānāsana", vysl:"úrdhva mukha švánásana", sk:"pes hlavou hore", dr:"tretie oko" },
+      { c:13, d:"out", poza:"adho_mukha", san:"Adho Mukha Śvānāsana", vysl:"adho mukha švánásana", sk:"pes hlavou dole", dr:"pupok" },
+      { c:7, d:"in", poza:"dandasana", cez:"skok_cez", san:"Baddha Padmāsana", vysl:"baddha padmásana", sk:"skok cez ruky do sedu", dr:"nos" },
+      ...ZAVER_LOTOS,
+    ],
+  },
+  ZAVER_BEZ: {
+    /* tá istá záverečná sekvencia bez inverzií (len Baddha Padmasana → Savasana) — pre začiatočníkov,
+       pri vysokom tlaku, glaukóme a v tehotenstve (NCCIH) */
+    nazov: "Záver bez inverzií", nazovSk: "Záver bez inverzií", popis: "lotos a záverečné ležanie, bez stoja na hlave a lopatkách", kola: false, zaciatok: "samasthiti", nadvazuje: true,
+    upozornenie: "lotos",
+    kroky: [
+      ...ZAVER_UVOD("Baddha Padmāsana", "baddha padmásana"),
+      ...ZAVER_LOTOS,
     ],
   },
 };
