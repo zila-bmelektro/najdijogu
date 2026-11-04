@@ -60,7 +60,43 @@ const POZY = {
   padmasana:   { h:[130,104], n:[129,118], p:[128,170], eL:[138,146], wL:[160,166], eR:[142,146], wR:[164,164], kL:[166,174], fL:[140,164], kR:[170,170], fR:[144,160] },
   baddha_padma:{ h:[132,104], n:[130,118], p:[128,170], eL:[112,140], wL:[120,162], eR:[116,142], wR:[126,164], kL:[166,174], fL:[140,164], kR:[170,170], fR:[144,160] },
   yoga_mudra:  { h:[180,170], n:[166,160], p:[128,170], eL:[134,140], wL:[124,162], eR:[138,142], wR:[130,164], kL:[166,176], fL:[140,166], kR:[170,172], fR:[144,162] },
-  utpluthih:   { h:[146,98],  n:[140,112], p:[126,156], eL:[150,142], wL:[158,179], eR:[154,142], wR:[162,179], kL:[166,156], fL:[138,148], kR:[170,152], fR:[142,144] },
+  utpluthih:   { h:[146,98],  n:[140,112], p:[126,156], eL:[150,142], wL:[158,179], eR:[154,142], wR:[162,179], kL:[166,156], fL:[138,148], kR:[170,152], fR:[142,144] },  /* krátke cvičenia (4.11.2026): ľah na chrbte hlava vľavo (ako `lah`), štvornožka a stolička z boku hlava vpravo,
+     sed so skríženými nohami a rotácie spredu (zrkadlo:true = druhá strana); s = stred chrbta (mačka/krava) */
+  lah_kolena:     { h:[61,172], n:[75,173], p:[128,173], eL:[104,175], wL:[126,177], eR:[104,174], wR:[126,175], kL:[150,143], fL:[166,178], kR:[152,145], fR:[170,178], s:[102,170] },
+  panva:          { h:[61,172], n:[75,173], p:[128,173], eL:[104,175], wL:[126,177], eR:[104,174], wR:[126,175], kL:[149,143], fL:[164,178], kR:[151,144], fR:[168,178], s:[102,176] },
+  most:           { h:[62,171], n:[76,173], p:[126,152], eL:[105,172], wL:[126,178], eR:[105,175], wR:[127,177], kL:[161,140], fL:[166,178], kR:[161,141], fR:[170,178] },
+  koleno:         { h:[61,172], n:[75,173], p:[128,173], eL:[103,167], wL:[110,146], eR:[102,163], wR:[113,144], kL:[150,143], fL:[166,178], kR:[111,140], fR:[145,156] },
+  koleno_tah:     { h:[61,172], n:[75,173], p:[128,173], eL:[104,170], wL:[106,148], eR:[103,167], wR:[109,146], kL:[150,143], fL:[166,178], kR:[105,144], fR:[140,158] },
+  kolena_obe:     { h:[61,172], n:[75,173], p:[128,173], eL:[103,167], wL:[110,146], eR:[102,163], wR:[113,144], kL:[113,139], fL:[147,157], kR:[111,140], fR:[145,156] },
+  kolena_obe_tah: { h:[61,172], n:[75,173], p:[128,173], eL:[104,170], wL:[106,148], eR:[103,167], wR:[109,146], kL:[107,142], fL:[142,158], kR:[105,144], fR:[140,158] },
+  supta_baddha:   { h:[61,172], n:[75,173], p:[128,173], eL:[98,177], wL:[118,179], eR:[100,175], wR:[122,177], kL:[157,150], fL:[146,176], kR:[162,159], fR:[142,177], s:[102,172] },
+  savasana_kolena:{ h:[61,173], n:[75,173], p:[128,173], eL:[98,170], wL:[118,165], eR:[100,176], wR:[124,178], kL:[150,143], fL:[166,178], kR:[152,145], fR:[170,178], s:[102,172] },
+  sed_kolena:     { h:[132,107], n:[127,120], p:[116,172], eL:[124,149], wL:[146,150], eR:[128,149], wR:[150,148], kL:[144,147], fL:[166,178], kR:[145,149], fR:[170,178] },
+  krava:          { h:[155,114], n:[146,125], p:[96,130], eL:[146,154], wL:[146,176], eR:[149,154], wR:[152,176], kL:[98,167], fL:[62,178], kR:[103,166], fR:[66,176], s:[121,136] },
+  macka:          { h:[153,133], n:[146,121], p:[96,130], eL:[146,150], wL:[146,172], eR:[149,150], wR:[151,172], kL:[98,167], fL:[62,178], kR:[103,166], fR:[66,176], s:[121,117] },
+  stvor_noha:     { h:[159,119], n:[146,124], p:[96,130], eL:[146,153], wL:[146,175], eR:[149,153], wR:[151,175], kL:[98,167], fL:[62,178], kR:[59,132], fR:[21,133] },
+  sed:            { h:[127,93], n:[127,107], p:[127,165], eL:[113,132], wL:[102,152], eR:[141,132], wR:[152,152], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  sed_rovno:      { h:[127,90], n:[127,104], p:[127,165], eL:[114,130], wL:[104,149], eR:[140,130], wR:[150,149], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  sed_brucho:     { h:[127,93], n:[127,107], p:[127,165], eL:[113,132], wL:[102,152], eR:[113,132], wR:[130,146], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  sed_nadych:     { h:[127,90], n:[127,104], p:[127,165], eL:[114,130], wL:[104,149], eR:[113,129], wR:[130,143], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  sed_rot:        { h:[140,93], n:[131,107], p:[127,165], eL:[143,133], wL:[152,153], eR:[156,121], wR:[164,142], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  sed_rot_hore:   { h:[140,90], n:[131,104], p:[127,165], eL:[143,130], wL:[152,151], eR:[156,118], wR:[164,139], kL:[92,171], fL:[132,177], kR:[162,171], fR:[122,177] },
+  stol_sed:       { h:[104,73], n:[104,87], p:[104,140], eL:[117,113], wL:[128,132], eR:[119,112], wR:[131,130], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178] },
+  stol_krava:     { h:[108,74], n:[110,88], p:[104,140], eL:[121,115], wL:[129,135], eR:[123,114], wR:[133,134], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178], s:[112,113] },
+  stol_macka:     { h:[123,98], n:[112,90], p:[104,140], eL:[123,117], wL:[132,137], eR:[125,116], wR:[135,135], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178], s:[98,112] },
+  stol_ramena_hore:{ h:[105,68], n:[105,82], p:[104,140], eL:[117,108], wL:[126,128], eR:[119,107], wR:[129,127], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178] },
+  stol_ramena_vzad:{ h:[100,72], n:[100,86], p:[104,140], eL:[114,112], wL:[124,131], eR:[115,111], wR:[127,129], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178] },
+  stol_predklon:  { h:[153,103], n:[139,101], p:[104,140], eL:[145,129], wL:[148,151], eR:[147,129], wR:[152,150], kL:[141,140], fL:[138,178], kR:[141,140], fR:[142,178] },
+  stol_spredu:    { h:[127,71], n:[127,85], p:[127,142], eL:[120,113], wL:[115,135], eR:[134,113], wR:[139,135], kL:[113,147], fL:[114,178], kR:[141,147], fR:[140,178] },
+  stol_rot:       { h:[140,73], n:[131,87], p:[127,142], eL:[136,116], wL:[140,137], eR:[159,94], wR:[162,116], kL:[113,147], fL:[114,178], kR:[141,147], fR:[140,178] },
+};
+
+/* rekvizity pod postavou (kreslí Postava.rekvizita): stolička z boku a spredu */
+const REKVIZITY = { stol_sed:"stol_bok", stol_krava:"stol_bok", stol_macka:"stol_bok", stol_ramena_hore:"stol_bok", stol_ramena_vzad:"stol_bok",
+  stol_predklon:"stol_bok", stol_spredu:"stol_predok", stol_rot:"stol_predok" };
+const REKVIZITY_TVAR = {
+  stol_bok: "M80 100 L84 146 L130 146 M86 146 L86 180 M128 146 L128 180",
+  stol_predok: "M104 104 L106 149 L148 149 L150 104 M108 149 L108 180 M146 149 L146 180",
 };
 
 /* Sanskritské číslovky: zápis + fonetický tvar pre slovenský hlas */
@@ -259,6 +295,115 @@ const SEKVENCIE = {
     kroky: [
       ...ZAVER_UVOD("Baddha Padmāsana", "baddha padmásana"),
       ...ZAVER_LOTOS,
+    ],
+  },
+  /* ---------- krátke cvičenia, fáza 1 (4.11.2026, velenie PROJEKTY/P-2026-11-najdijogu-kratke-jogy.md §1a) ----------
+     zostavy z manuálu štúdie Back to Health (BMC) a materiálov NHS, Michigan Medicine, Cleveland Clinic, CHOP;
+     kratky = nie je v zozname blokov aštangy, spúšťa sa dlaždicou na úvode; c:0 (bez vinyása countu).
+     Krok: d "in"/"out" = pohyb na nádych/výdych (tempo bloku), d "volne" = pohyb bez väzby na dych, trv = počet
+     voľných dychov (1 voľný dych = priemer nádychu a výdychu tempa bloku); hold = výdrž vo voľnom dychu (počet dychov);
+     skupina { opak, hovor, kroky } = opakovanie (napr. mačka–krava 8× = striedanie dvoch póz), od 2. opakovania hlas
+     povie len krátky pokyn `kr` (hovor = koľko opakovaní ešte hovorí, ďalej len tóny); tip = text na obrazovke, nehovorí sa */
+  CHRBAT: {
+    nazov: "Zdravý chrbát", nazovSk: "Zdravý chrbát", popis: "v ľahu a na štyroch", kola: false, kratky: true, zaciatok: "lah_kolena", nadvazuje: true,
+    tempo: { in: 5, out: 5 }, uvodHlas: "Cvič pomaly a len v pohodlnom rozsahu.",
+    text: "Krátka sada jemných cvikov v ľahu a na štyroch, ktorá vychádza z pozícií používaných v štúdiách jogy pri bolesti dolnej časti chrbta; cvič pomaly a len v pohodlnom rozsahu.",
+    kroky: [
+      { d:"volne", trv:1, poza:"lah_kolena", sk:"ľahni si na chrbát, pokrč kolená, chodidlá na zemi", hold:5, tip:"dýchaj prirodzene, nič nenúť" },
+      { opak:8, tip:"dýchaj plynule, dych nezadržiavaj", kroky:[
+        { d:"volne", trv:1.2, poza:"panva", sk:"naklop panvu, driek pritlač k podložke a chvíľu drž", kr:"pritlač a drž" },
+        { d:"volne", trv:0.8, poza:"lah_kolena", sk:"uvoľni", kr:"uvoľni" } ] },
+      { opak:6, tip:"najprv pritiahni panvu, chrbát neprehýbaj · ak to bolí chrbát, ostaň ležať a rob naklápanie panvy", kroky:[
+        { d:"in", poza:"most", san:"Setu Bandhāsana", vysl:"setu bandhásana", sk:"malý mostík: nádych, pomaly zdvihni panvu", kr:"hore", hold:1 },
+        { d:"out", poza:"lah_kolena", san:"Setu Bandhāsana", vysl:"setu bandhásana", sk:"výdych, pomaly dole", kr:"dole" } ] },
+      { opak:2, tip:"ak na koleno nedosiahneš, pomôž si uterákom", kroky:[
+        { d:"in", poza:"koleno", san:"Ardha Apānāsana", vysl:"ardha apánásana", sk:"nádych, pravé koleno k hrudi", kr:"pravé koleno k hrudi" },
+        { d:"out", poza:"koleno_tah", san:"Ardha Apānāsana", vysl:"ardha apánásana", sk:"výdych, jemne priťahuj", kr:"priťahuj" },
+        { d:"volne", trv:0.8, poza:"lah_kolena", sk:"polož chodidlo späť", kr:"späť" } ] },
+      { opak:2, tip:"ak na koleno nedosiahneš, pomôž si uterákom", kroky:[
+        { d:"in", poza:"koleno", zrkadlo:"nohy", san:"Ardha Apānāsana", vysl:"ardha apánásana", sk:"nádych, ľavé koleno k hrudi", kr:"ľavé koleno k hrudi" },
+        { d:"out", poza:"koleno_tah", zrkadlo:"nohy", san:"Ardha Apānāsana", vysl:"ardha apánásana", sk:"výdych, jemne priťahuj", kr:"priťahuj" },
+        { d:"volne", trv:0.8, poza:"lah_kolena", sk:"polož chodidlo späť", kr:"späť" } ] },
+      { d:"in", poza:"kolena_obe", san:"Apānāsana", vysl:"apánásana", sk:"nádych, obe kolená k hrudi", tip:"ak na kolená nedosiahneš, pomôž si uterákom" },
+      { d:"out", poza:"kolena_obe_tah", san:"Apānāsana", vysl:"apánásana", sk:"výdych, jemne priťahuj", hold:3 },
+      { d:"volne", trv:0.8, poza:"lah_kolena", sk:"polož chodidlá späť" },
+      { d:"volne", trv:1.6, poza:"stvornozka", cez:"sed_kolena", sk:"pomaly sa posaď a príď na štyri", tip:"dlane pod ramenami, kolená pod bedrami" },
+      { opak:8, tip:"krk nepreťahuj, hlavu nezakláňaj", kroky:[
+        { d:"in", poza:"krava", san:"Bitilāsana", vysl:"bitilásana", sk:"nádych, krava: brucho k zemi, hrudník dopredu", kr:"krava" },
+        { d:"out", poza:"macka", san:"Mārjaryāsana", vysl:"márdžarjásana", sk:"výdych, mačka: chrbát do oblúka, brada k hrudi", kr:"mačka" } ] },
+      { opak:3, tip:"panva ostáva rovno", kroky:[
+        { d:"volne", trv:1, poza:"stvor_noha", sk:"vystri pravú nohu dozadu", kr:"noha dozadu" },
+        { d:"volne", trv:1, poza:"stvornozka", sk:"koleno späť", kr:"späť" } ] },
+      { d:"volne", trv:1, poza:"stvor_noha", sk:"vystri pravú nohu a drž", hold:3, tip:"panva ostáva rovno" },
+      { d:"volne", trv:1, poza:"stvornozka", sk:"koleno späť" },
+      { opak:3, tip:"panva ostáva rovno", kroky:[
+        { d:"volne", trv:1, poza:"stvor_noha", zrkadlo:"nohy", sk:"vystri ľavú nohu dozadu", kr:"noha dozadu" },
+        { d:"volne", trv:1, poza:"stvornozka", sk:"koleno späť", kr:"späť" } ] },
+      { d:"volne", trv:1, poza:"stvor_noha", zrkadlo:"nohy", sk:"vystri ľavú nohu a drž", hold:3, tip:"panva ostáva rovno" },
+      { d:"volne", trv:1, poza:"stvornozka", sk:"koleno späť" },
+      { d:"volne", trv:1, poza:"balasana", san:"Bālāsana", vysl:"bálásana", sk:"poloha dieťaťa: sadni si na päty, čelo k zemi", hold:8, tip:"pri bolesti kolien si daj zrolovanú deku za kolená" },
+      { d:"volne", trv:1.6, poza:"savasana_kolena", cez:"sed_kolena", san:"Śavāsana", vysl:"šavásana", sk:"ľahni si na chrbát a odpočívaj, oči môžeš zavrieť", hold:30 },
+    ],
+  },
+  VECER: {
+    nazov: "Večer, na spánok", nazovSk: "Večer, na spánok", popis: "v sede a v ľahu", kola: false, kratky: true, zaciatok: "sed", nadvazuje: true,
+    tempo: { in: 5, out: 5 }, uvodHlas: "Dýchaj pohodlne, dych nikdy nenúť.",
+    text: "Pokojné večerné cvičenie v ľahu a v sede s pomalým dychom na upokojenie pred spaním.",
+    kroky: [
+      { d:"volne", trv:1, poza:"sed", san:"Sukhāsana", vysl:"sukhásana", sk:"sadni si pohodlne so skríženými nohami", hold:8, tip:"dýchaj prirodzene, dych nikdy nenúť" },
+      { opak:4, tip:"otáčaj sa len kam je to pohodlné", kroky:[
+        { d:"in", poza:"sed_rot_hore", san:"Parivṛtta Sukhāsana", vysl:"parivrtta sukhásana", sk:"nádych, predĺž chrbát", kr:"predĺž" },
+        { d:"out", poza:"sed_rot", san:"Parivṛtta Sukhāsana", vysl:"parivrtta sukhásana", sk:"výdych, otoč sa doprava", kr:"otoč sa" } ] },
+      { d:"volne", trv:1, poza:"sed_rovno", san:"Sukhāsana", vysl:"sukhásana", sk:"vráť sa do stredu" },
+      { opak:4, tip:"otáčaj sa len kam je to pohodlné", kroky:[
+        { d:"in", poza:"sed_rot_hore", zrkadlo:true, san:"Parivṛtta Sukhāsana", vysl:"parivrtta sukhásana", sk:"nádych, predĺž chrbát", kr:"predĺž" },
+        { d:"out", poza:"sed_rot", zrkadlo:true, san:"Parivṛtta Sukhāsana", vysl:"parivrtta sukhásana", sk:"výdych, otoč sa doľava", kr:"otoč sa" } ] },
+      { d:"volne", trv:1, poza:"sed_rovno", san:"Sukhāsana", vysl:"sukhásana", sk:"vráť sa do stredu" },
+      { d:"volne", trv:1.4, poza:"stvornozka", sk:"príď na štyri", tip:"dlane pod ramenami, kolená pod bedrami" },
+      { opak:6, tip:"pomaly, krk nepreťahuj", kroky:[
+        { d:"in", poza:"krava", san:"Bitilāsana", vysl:"bitilásana", sk:"nádych, krava: brucho k zemi, hrudník dopredu", kr:"krava" },
+        { d:"out", poza:"macka", san:"Mārjaryāsana", vysl:"márdžarjásana", sk:"výdych, mačka: chrbát do oblúka, brada k hrudi", kr:"mačka" } ] },
+      { d:"volne", trv:1, poza:"balasana", san:"Bālāsana", vysl:"bálásana", sk:"poloha dieťaťa: sadni si na päty, čelo k zemi", hold:8, tip:"pri bolesti kolien si daj zrolovanú deku za kolená" },
+      { d:"volne", trv:1.6, poza:"supta_baddha", cez:"sed_kolena", san:"Supta Baddha Koṇāsana", vysl:"supta baddha konásana", sk:"ľahni si na chrbát, spoj chodidlá a nechaj kolená voľne klesnúť do strán", hold:15, tip:"bez napätia v bedrách, kolená netlač k zemi" },
+      { d:"in", poza:"kolena_obe", san:"Apānāsana", vysl:"apánásana", sk:"nádych, obe kolená k hrudi" },
+      { d:"out", poza:"kolena_obe_tah", san:"Apānāsana", vysl:"apánásana", sk:"výdych, jemne priťahuj", hold:8, tip:"ak na kolená nedosiahneš, pomôž si uterákom" },
+      { d:"volne", trv:1.2, poza:"savasana", san:"Śavāsana", vysl:"šavásana", sk:"vystri nohy, ruky voľne pri tele, zavri oči a odpočívaj", hold:20 },
+    ],
+  },
+  KANCELARIA: {
+    nazov: "Kancelária na stoličke", nazovSk: "Kancelária na stoličke", popis: "na stoličke", kola: false, kratky: true, zaciatok: "stol_sed", nadvazuje: true,
+    tempo: { in: 5, out: 5 }, uvodHlas: "Cvič pomaly a len v pohodlnom rozsahu.",
+    text: "Päťminútová pauza na stoličke: jemný pohyb chrbta, ramien a trupu pri sedavej práci.",
+    kroky: [
+      { d:"volne", trv:1, poza:"stol_sed", sk:"sadni si rovno, chodidlá na zemi", hold:4, tip:"pevná stolička bez koliesok" },
+      { opak:6, kroky:[
+        { d:"in", poza:"stol_krava", san:"Bitilāsana", vysl:"bitilásana", sk:"nádych, hrudník dopredu", kr:"hrudník dopredu" },
+        { d:"out", poza:"stol_macka", san:"Mārjaryāsana", vysl:"márdžarjásana", sk:"výdych, chrbát do oblúka, brada k hrudi", kr:"chrbát do oblúka" } ] },
+      { opak:6, hovor:1, tip:"pomalé krúženie ramenami dozadu", kroky:[
+        { d:"volne", trv:0.6, poza:"stol_ramena_hore", sk:"krúž ramenami dozadu: hore", kr:"" },
+        { d:"volne", trv:0.6, poza:"stol_ramena_vzad", sk:"dozadu a dole", kr:"" },
+        { d:"volne", trv:0.6, poza:"stol_sed", sk:"krúž ramenami dozadu", ticho:true } ] },
+      { opak:3, tip:"otáčaj sa len kam je to pohodlné", kroky:[
+        { d:"in", poza:"stol_spredu", sk:"nádych, predĺž chrbát", kr:"predĺž" },
+        { d:"out", poza:"stol_rot", sk:"výdych, otoč sa doprava a chvíľu drž", kr:"otoč sa", hold:1 } ] },
+      { opak:3, tip:"otáčaj sa len kam je to pohodlné", kroky:[
+        { d:"in", poza:"stol_spredu", sk:"nádych, predĺž chrbát", kr:"predĺž" },
+        { d:"out", poza:"stol_rot", zrkadlo:true, sk:"výdych, otoč sa doľava a chvíľu drž", kr:"otoč sa", hold:1 } ] },
+      { d:"volne", trv:1, poza:"stol_sed", sk:"vráť sa do stredu" },
+      { d:"volne", trv:1, poza:"stol_predklon", sk:"pomaly sa predkloň, len kam je to pohodlné", hold:6, tip:"hlavu nedávaj hlboko · pri glaukóme alebo vysokom krvnom tlaku predklon vynechaj" },
+      { d:"volne", trv:1, poza:"stol_sed", sk:"pomaly sa vzpriam" },
+    ],
+  },
+  DYCH: {
+    nazov: "Dych", nazovSk: "Dych", popis: "pokojné dýchanie v sede", kola: false, kratky: true, zaciatok: "sed", nadvazuje: true,
+    tempo: { in: 4, out: 6 }, uvodHlas: "Dýchaj pohodlne, dych nikdy nenúť.",
+    text: "Päť minút pokojného dýchania: najprv prirodzený dych, potom pomalší dych s dlhším výdychom.",
+    kroky: [
+      { d:"volne", trv:1, poza:"sed_brucho", sk:"sadni si pohodlne a dýchaj prirodzene, ruku si môžeš položiť na brucho", hold:10, tip:"dýchaj prirodzene, nikdy nenúť" },
+      { opak:24, hovor:3, tip:"dýchaj pohodlne, nikdy nenúť · keď je to nepríjemné, vráť sa k prirodzenému dychu", kroky:[
+        { d:"in", poza:"sed_nadych", sk:"teraz pomalšie: nádych", kr:"nádych" },
+        { d:"out", poza:"sed_brucho", sk:"dlhý výdych", kr:"výdych" } ] },
+      { d:"volne", trv:1, poza:"sed_brucho", sk:"vráť sa k prirodzenému dychu", hold:5 },
     ],
   },
 };

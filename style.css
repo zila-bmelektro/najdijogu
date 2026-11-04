@@ -144,3 +144,24 @@ button.tiche:hover { background: #f1ecdf; }
   .cv-kolo { font-size: .8rem; white-space: normal; flex: 1; min-width: 0; }
   .cv-ostava { flex: 0 0 auto; }
 }
+
+/* krátke cvičenie: dlaždice na úvode (4.11.2026) */
+.kratke { max-width: 1100px; margin: 40px auto 0; padding: 0 24px; }
+.kratke-upoz { max-width: 80ch; background: #fbf3df; border-left: 4px solid var(--okr); padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; }
+.kratke-viac { max-width: 80ch; margin: 0 0 16px; }
+.kratke-viac summary { cursor: pointer; color: var(--zelena); font-weight: 600; padding: 4px 0; }
+.kratke-viac p { margin: 8px 0; }
+.kratke-dlazdice { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 12px; }
+.dlazdica { display: flex; flex-direction: column; gap: 10px; text-align: left; font: inherit; color: var(--text); background: var(--papier); border: 1px solid #e4dece; border-radius: var(--r); padding: 18px; box-shadow: var(--tien); cursor: pointer; transition: transform .08s, box-shadow .2s, border-color .2s; }
+.dlazdica:hover, .dlazdica:focus-visible { transform: translateY(-2px); border-color: var(--zelena); box-shadow: 0 10px 30px rgba(20,40,30,.14); outline: none; }
+.dl-hore { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.dl-hore b { font-family: Georgia, serif; font-size: 1.2rem; line-height: 1.2; }
+.dl-min { white-space: nowrap; font-weight: 700; color: var(--zelena); font-size: 1.1rem; }
+.dl-text { font-size: .92rem; color: var(--tlmene); flex: 1; }
+.dl-dole { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .8rem; color: var(--tlmene); flex-wrap: wrap; }
+.dl-start { background: var(--zelena); color: #fff; border-radius: 999px; padding: 6px 14px; font-weight: 700; font-size: .9rem; white-space: nowrap; }
+.cv-dych.volne { background: #3a4a44; color: #e6ede9; }
+#cv-dych-pruh-vnutro.volne { background: #5f7a6f; }
+@media (max-width: 1000px) { .kratke-dlazdice { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .kratke-dlazdice { grid-template-columns: 1fr; } .dlazdica { padding: 14px; } }
+@media (min-width: 1600px) { .kratke { max-width: 1400px; } .dlazdica { padding: 24px; } .dl-hore b { font-size: 1.45rem; } .dl-text { font-size: 1.05rem; } }

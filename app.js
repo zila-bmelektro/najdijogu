@@ -11,20 +11,25 @@
   if (!JAZYKY.includes(N.jazyk)) N.jazyk = "oboje";
   if (!JAZYKY.includes(N.jazykText)) N.jazykText = "oboje";
   /* bloky cvičenia (pokyn 3.11.2026): namiesto jednej voľby A / B / A+B sa zaškrtnú bloky; staré „sekv" sa prevedie */
-  const BLOKY = Object.keys(SEKVENCIE);
+  const BLOKY = Object.keys(SEKVENCIE).filter(b => !SEKVENCIE[b].kratky);
+  /* krátke cvičenia (4.11.2026): samostatné programy spúšťané dlaždicou na úvode, nie bloky aštangy */
+  const KRATKE = Object.keys(SEKVENCIE).filter(b => SEKVENCIE[b].kratky);
   if (!ULOZENE.bloky && ULOZENE.sekv) N.bloky = ULOZENE.sekv === "AB" ? ["A", "B"] : [ULOZENE.sekv];
   if (!Array.isArray(N.bloky)) N.bloky = ["A"];
   N.bloky = N.bloky.filter(b => BLOKY.includes(b)); if (!N.bloky.length) N.bloky = ["A"];
   if (!N.tempo || typeof N.tempo !== "object") N.tempo = {};
   delete N.sekv;
-  /* tempo dychu podľa bloku cvičenia: vlastné, inak hlavné tempo z Dýchania */
-  const tempoB = b => N.tempo[b] || { in: N.in, out: N.out };
-  const dlzka = k => { const T = tempoB(k.sekv); return k.d === "in" ? T.in : T.out; };
+  /* tempo dychu podľa bloku cvičenia: vlastné, inak východiskové tempo bloku (krátke cvičenia), inak hlavné tempo z Dýchania */
+  const tempoB = b => N.tempo[b] || (SEKVENCIE[b] && SEKVENCIE[b].tempo) || { in: N.in, out: N.out };
+  /* voľný dych (krátke cvičenia: pohyb bez väzby na dych a výdrže) = priemer nádychu a výdychu tempa bloku */
+  const volnyDych = b => { const T = tempoB(b); return (T.in + T.out) / 2; };
+  const dlzka = k => { if (k.d === "volne") return (k.trv || 1) * volnyDych(k.sekv); const T = tempoB(k.sekv); return k.d === "in" ? T.in : T.out; };
   const dychovVydrze = k => k.hold === "pes" ? N.pes : k.hold === "drz" ? N.drz : (+k.hold || 0);
   const nazovBloku = (S, jazyk) => (jazyk === "sk" ? S.nazovSk : S.nazov) || S.nazov;
   const uloz = () => { try { localStorage.setItem("nj-nast", JSON.stringify(N)); } catch (e) {} };
   const fmt = s => s.toFixed(1).replace(".", ",") + " s";
 
+  let cvHotove = false;   /* dlaždice krátkych cvičení sa prekreslia pri návrate na úvod (tempo mohlo zmeniť) */
   /* ---------- obrazovky ---------- */
   const ukaz = id => {
     $$(".obrazovka").forEach(o => o.classList.toggle("aktivna", o.id === id));
@@ -32,6 +37,7 @@
     if (id !== "cvicenie") cv.stop();
     if (id !== "dych") dych.stop();
     if (id === "nastavenie") obnovNastavenie();
+    if (id === "uvod" && cvHotove) vykresliKratke();
     location.hash = id === "uvod" ? "" : id;
   };
   document.addEventListener("click", e => {
@@ -99,8 +105,14 @@
   const slovaKroku = k => {
     const casti = [], sk = N.jazyk === "sk", san = N.jazyk === "san";
     if (k.c && N.cislo) casti.push(sk ? COUNT_SK[k.c] : COUNT[k.c][1]);
-    if (N.nazvy) { if (!san) casti.push(k.sk); if (!sk) casti.push(k.vysl || k.san); }
-    return casti;
+    /* krátke cvičenia: ticho = nehovorí sa; od 2. opakovania len krátky pokyn (kr), po `hovor` opakovaniach už nič */
+    if (k.ticho) return casti;
+    if (k.opakI > 1) {
+      if (N.nazvy && !(k.hovor && k.opakI > k.hovor)) casti.push(san && k.vysl ? k.vysl : k.kr);
+      return casti.filter(Boolean);
+    }
+    if (N.nazvy) { if (!san || !(k.vysl || k.san)) casti.push(k.sk); if (!sk) casti.push(k.vysl || k.san); }
+    return casti.filter(Boolean);
   };
   /* povedz: text alebo pole textov; každý kus = klip, ak existuje, inak hlas prehliadača */
   const povedz = (text, dolezite) => {
@@ -207,16 +219,22 @@
   $("#in-nazvy").onchange = e => { N.nazvy = e.target.checked; uloz(); };
   $("#in-cislo").onchange = e => { N.cislo = e.target.checked; uloz(); };
 
-  /* Program = plochý zoznam pohybov (bloky × kolá), každý s trvaním v sekundách pri tempe svojho bloku */
-  const zostavProgram = () => {
+  /* Program = plochý zoznam pohybov (bloky × kolá), každý s trvaním v sekundách pri tempe svojho bloku.
+     Krátke cvičenia: skupina { opak, hovor, kroky } sa rozvinie na opakovania (opakI/opakN), výdrže sú vo voľnom dychu. */
+  const zostavProgram = (bloky) => {
     const prog = [];
-    BLOKY.filter(b => N.bloky.includes(b)).forEach(b => {
+    (bloky || BLOKY.filter(b => N.bloky.includes(b))).forEach(b => {
       const S = SEKVENCIE[b], kol = S.kola ? N.kola : 1;
       for (let kolo = 1; kolo <= kol; kolo++) {
         S.kroky.forEach(k => {
-          const x = { ...k, sekv: b, kolo, kolaSpolu: kol };
-          x.holdDychov = dychovVydrze(x);
-          prog.push(x);
+          const skup = k.opak ? k : { opak: 1, kroky: [k] };
+          for (let r = 1; r <= skup.opak; r++) skup.kroky.forEach((sub, j) => {
+            const x = { ...sub, sekv: b, kolo, kolaSpolu: kol, tip: sub.tip || skup.tip, novyCvik: r === 1 && j === 0 };
+            if (skup.opak > 1) Object.assign(x, { opakI: r, opakN: skup.opak, hovor: skup.hovor });
+            x.holdDychov = dychovVydrze(x);
+            if (S.kratky) x.volny = true;
+            prog.push(x);
+          });
         });
       }
     });
@@ -224,6 +242,7 @@
        2n fáz, alebo 2n − 1, keď ďalší krok ide tou istou fázou ako pohyb (napr. pluh → kolená k ušiam, oboje výdych) */
     prog.forEach((x, j) => {
       const T = tempoB(x.sekv), d2 = prog[j + 1];
+      if (x.volny) { x.holdFaz = 0; x.trvanie = dlzka(x) + x.holdDychov * volnyDych(x.sekv); return; }
       x.holdFaz = x.holdDychov ? 2 * x.holdDychov - (d2 && d2.d === x.d ? 1 : 0) : 0;
       x.trvanie = dlzka(x) + x.holdDychov * (T.in + T.out) - (x.holdFaz % 2 ? (x.d === "in" ? T.in : T.out) : 0);
     });
@@ -253,28 +272,39 @@
     const svg = $("#cv-svg"), post = new Postava(svg, "#f3efe4");
     const elCount = $("#cv-count"), elNazov = $("#cv-nazov"), elSk = $("#cv-nazov-sk"), elDych = $("#cv-dych"), elDris = $("#cv-dris"),
           elKolo = $("#cv-kolo"), elDalej = $("#cv-dalej"), elOstava = $("#cv-ostava"), pruh = $("#cv-progres-pruh"), dPruh = $("#cv-dych-pruh-vnutro"), btnPauza = $("#cv-pauza");
-    let prog = [], i = 0, rezim = "tv", bezi = false, pauza = false, timer = null, holdTimer = null, predpovedTimer = null;
+    let prog = [], i = 0, rezim = "tv", bezi = false, pauza = false, timer = null, holdTimer = null, predpovedTimer = null, spatTimer = null, blokyAkt;
+    /* po zmene tempa počas cvičenia prepočítať trvanie krokov (čas a „ostáva“ na obrazovke) */
+    const prepocitaj = () => { const novy = zostavProgram(blokyAkt); prog.forEach((x, j) => { if (novy[j]) x.trvanie = novy[j].trvanie; }); };
 
     /* texty na obrazovke podľa jazyka textov (pokyn 3.11.2026): sk = len slovensky, san = len sanskrit, oboje = sanskrit + slovensky */
-    const nazovKroku = k => N.jazykText === "sk" ? k.sk : N.jazykText === "san" ? k.san : `${k.san} — ${k.sk}`;
+    const nazovKroku = k => N.jazykText === "sk" || !k.san ? k.sk : N.jazykText === "san" ? k.san : `${k.san} — ${k.sk}`;
+    const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
     const texty = k => {
       const ct = k.c ? COUNT[k.c] : null, t = N.jazykText;
-      elCount.textContent = ct ? (t === "sk" ? String(k.c) : ct[0]) : "";
-      elNazov.textContent = t === "sk" ? k.sk : k.san;
-      elSk.textContent = t === "oboje" ? k.sk : ""; elSk.hidden = t !== "oboje";
-      elDris.textContent = k.dr ? (t === "sk" ? "pohľad: " : "drishti: ") + k.dr : "";
-      const S = SEKVENCIE[k.sekv], vKole = prog.filter(x => x.sekv === k.sekv && x.kolo === k.kolo);
-      elKolo.textContent = `${nazovBloku(S, t)}` + (k.kolaSpolu > 1 ? ` · kolo ${k.kolo}/${k.kolaSpolu}` : "") + ` · pohyb ${vKole.indexOf(k) + 1}/${vKole.length}`;
+      elCount.textContent = ct ? (t === "sk" ? String(k.c) : ct[0]) : k.opakN > 1 ? `${k.opakI}/${k.opakN}` : "";
+      elNazov.textContent = t === "sk" || !k.san ? k.sk : k.san;
+      const sSk = t === "oboje" && !!k.san;
+      elSk.textContent = sSk ? k.sk : ""; elSk.hidden = !sSk;
+      elDris.textContent = k.tip ? k.tip : k.dr ? (t === "sk" ? "pohľad: " : "drishti: ") + k.dr : "";
+      const S = SEKVENCIE[k.sekv];
+      if (S.kratky) {
+        const spolu = prog.reduce((a, x) => a + x.trvanie, 0), za = prog.slice(0, i).reduce((a, x) => a + x.trvanie, 0);
+        elKolo.textContent = `${nazovBloku(S, t)} · ${mmss(za)} / ${mmss(spolu)}`;
+      } else {
+        const vKole = prog.filter(x => x.sekv === k.sekv && x.kolo === k.kolo);
+        elKolo.textContent = `${nazovBloku(S, t)}` + (k.kolaSpolu > 1 ? ` · kolo ${k.kolo}/${k.kolaSpolu}` : "") + ` · pohyb ${vKole.indexOf(k) + 1}/${vKole.length}`;
+      }
       const dalsi = prog[i + 1];
       elDalej.textContent = dalsi ? "ďalej: " + nazovKroku(dalsi) + (dalsi.c ? " · " + (t === "sk" ? dalsi.c : COUNT[dalsi.c][0]) : "") + (dalsi.sekv !== k.sekv ? ` (${nazovBloku(SEKVENCIE[dalsi.sekv], t)})` : dalsi.kolo !== k.kolo ? ` (kolo ${dalsi.kolo})` : "") : "ďalej: koniec";
       ovladanie();
     };
     const zobrazKrok = (k, ms) => {
       texty(k);
-      elDych.textContent = k.d === "in" ? "NÁDYCH" : "VÝDYCH";
-      elDych.className = "cv-dych " + (k.d === "in" ? "nadych" : "vydych");
+      elDych.textContent = k.d === "in" ? "NÁDYCH" : k.d === "out" ? "VÝDYCH" : "DÝCHAJ VOĽNE";
+      elDych.className = "cv-dych " + (k.d === "in" ? "nadych" : k.d === "out" ? "vydych" : "volne");
       const ostava = prog.length - i - 1;
-      elOstava.textContent = `ostáva ${ostava} ${ostava === 1 ? "pohyb" : ostava < 5 && ostava > 0 ? "pohyby" : "pohybov"}`;
+      if (SEKVENCIE[k.sekv].kratky) { const min = Math.max(1, Math.round(prog.slice(i).reduce((a, x) => a + x.trvanie, 0) / 60)); elOstava.textContent = `ostáva ${min} min`; }
+      else elOstava.textContent = `ostáva ${ostava} ${ostava === 1 ? "pohyb" : ostava < 5 && ostava > 0 ? "pohyby" : "pohybov"}`;
       pruh.style.width = (100 * i / prog.length) + "%";
       /* predcvičovanie: každý cvik sa ukáže od základného postoja bloku (blok s `nadvazuje` = od predchádzajúceho cviku,
          napr. záverečná sekvencia v ľahu); cvičenie: nadväzuje na predchádzajúci */
@@ -295,11 +325,11 @@
     $("#cv-volby").addEventListener("click", e => {
       const b = e.target.closest("button"); if (!b) return; b.blur();
       if (b.dataset.v) nastav(b.dataset.v, b.dataset.h);
-      else if (b.dataset.tempoCv) { const k = prog[i]; if (k) { zmenTempo(k.sekv, +b.dataset.tempoCv); ovladanie(); } }
+      else if (b.dataset.tempoCv) { const k = prog[i]; if (k) { zmenTempo(k.sekv, +b.dataset.tempoCv); prepocitaj(); texty(k); } }
     });
     const dychPruh = (d, ms) => {
       dPruh.style.transition = "none"; dPruh.style.width = d === "in" ? "0%" : "100%";
-      dPruh.className = d === "in" ? "nadych" : "vydych";
+      dPruh.className = d === "in" ? "nadych" : d === "out" ? "vydych" : "volne";
       requestAnimationFrame(() => requestAnimationFrame(() => { dPruh.style.transition = `width ${ms}ms linear`; dPruh.style.width = d === "in" ? "100%" : "0%"; }));
     };
     /* poradie hlasu (pokyn 19.9.): ~2,5 s pred ďalším cvikom povie LEN slovensky, čo príde („ďalej: predklon");
@@ -310,20 +340,34 @@
       povedz((novy ? [nazovBloku(SEKVENCIE[k.sekv], N.jazyk)] : []).concat(slovaKroku(k)), true);
     };
     /* predpoveď: v režime „oboje" aj „sk" slovensky (pokyn 19.9.), v režime „san" sanskritom */
-    const predpovedz = () => { const d = prog[i + 1]; if (d && N.nazvy && rezim === "tv") povedz(["ďalej", N.jazyk === "san" ? (d.vysl || d.san) : d.sk]); };
+    /* krátke cvičenia: bez predpovede (pokyn zaznie na začiatku kroku, opakovania by ju zahltili) */
+    const predpovedz = () => { const d = prog[i + 1]; if (d && N.nazvy && rezim === "tv" && !SEKVENCIE[d.sekv].kratky) povedz(["ďalej", N.jazyk === "san" ? (d.vysl || d.san) : d.sk]); };
 
     const spusti = () => {
       if (i >= prog.length) return koniec(true);
       const k = prog[i];
       const ms = dlzka(k) * 1000;
       zobrazKrok(k, ms); dychPruh(k.d, ms);
-      blomp();
-      setTimeout(() => { if (k.d === "in") tonNadych(); else tonVydych(); }, 250);
+      if (k.novyCvik !== false) blomp();
+      setTimeout(() => { if (k.d === "in") tonNadych(); else if (k.d === "out") tonVydych(); }, k.novyCvik !== false ? 250 : 0);
       hovorKrok(k);
       clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer);
       if (!k.holdDychov && rezim === "tv") predpovedTimer = setTimeout(predpovedz, Math.max(ms * 0.5, ms - 2500));
       const poPohybe = () => {
         if (!k.holdDychov) return dalej();
+        if (k.volny) {
+          /* výdrž vo voľnom dychu (krátke cvičenia): bez tónov, odpočet dychov; tempo sa dá meniť aj počas výdrže */
+          let zost = k.holdDychov;
+          if (!(k.opakI > 1)) povedz(`${k.holdDychov} ${k.holdDychov === 1 ? "dych" : k.holdDychov < 5 ? "dychy" : "dychov"}`);
+          const volne = () => {
+            if (zost <= 0) return dalej();
+            const d = volnyDych(k.sekv);
+            elDych.textContent = `DÝCHAJ VOĽNE  ${zost}`; elDych.className = "cv-dych volne";
+            dychPruh("volne", d * 1000);
+            holdTimer = setTimeout(() => { zost--; volne(); }, d * 1000);
+          };
+          return volne();
+        }
         /* výdrž: n dychov, každý nádych/výdych tón + pruh */
         const prva = k.d === "in" ? "out" : "in";
         let zost = k.holdDychov, faza = prva, odohrane = 0;
@@ -345,12 +389,15 @@
     };
     const dalej = () => { if (rezim === "tv" || prog[i].holdDychov) { i++; spusti(); } };
     const koniec = dokoncene => {
+      const kratky = prog[0] && SEKVENCIE[prog[0].sekv].kratky, kam = kratky ? "uvod" : "nastavenie";
+      const spat = () => { ukaz(kam); if (kratky) { const el = $("#kratke"); if (el) el.scrollIntoView(); } };
       stop();
-      if (dokoncene) { povedz(N.jazyk === "sk" || (prog[prog.length - 1] || {}).poza === "savasana" ? "Hotovo." : "Hotovo. Samasthiti.", true); setTimeout(() => ukaz("nastavenie"), 2500); }
-      else ukaz("nastavenie");
+      if (dokoncene) { povedz(N.jazyk === "sk" || kratky || (prog[prog.length - 1] || {}).poza === "savasana" ? "Hotovo." : "Hotovo. Samasthiti.", true); spatTimer = setTimeout(spat, 2500); }
+      else spat();
     };
-    const start = r => {
-      rezim = r; prog = zostavProgram(); i = 0; bezi = true; pauza = false;
+    const start = (r, bloky) => {
+      clearTimeout(spatTimer); blokyAkt = bloky;
+      rezim = r; prog = zostavProgram(bloky); i = 0; bezi = true; pauza = false;
       btnPauza.textContent = "Pauza";
       $(".cv-klav").textContent = (r === "tv" ? "medzerník = pauza · šípky = cvik · R = znova · Esc = koniec" : "Ďalej = ďalší cvik · R = zopakovať · šípky · Esc = koniec") + " · + / − = tempo dychu · H = jazyk hlasu · T = jazyk textov · C = číslo";
       $("#cv-next").style.visibility = "visible";
@@ -359,7 +406,7 @@
       ukaz("cvicenie");
       const S0 = SEKVENCIE[prog[0].sekv];
       texty(prog[0]); elDych.textContent = ""; elDych.className = "cv-dych";
-      povedz(N.jazyk === "sk" ? [S0.nazovSk || S0.nazov, "Stoj. Pripravený?"] : [S0.nazov, "Samasthiti. Pripravený?"], true);
+      povedz(S0.kratky ? [nazovBloku(S0, N.jazyk), S0.uvodHlas] : N.jazyk === "sk" ? [S0.nazovSk || S0.nazov, "Stoj. Pripravený?"] : [S0.nazov, "Samasthiti. Pripravený?"], true);
       timer = setTimeout(spusti, 2500);
     };
     const stop = () => { bezi = false; clearTimeout(timer); clearTimeout(holdTimer); clearTimeout(predpovedTimer); zastavHlas(); pustiObrazovku(); };
@@ -385,7 +432,7 @@
       else if (e.key === "ArrowLeft") skok(-1);
       else if (e.key.toLowerCase() === "r") znova();
       else if (e.key === "Escape" || e.key === "Backspace") koniec(false);
-      else if (e.key === "+" || e.key === "=" || e.key === "-" || e.key === "_") { const k = prog[i]; if (k) { zmenTempo(k.sekv, (e.key === "-" || e.key === "_") ? -0.5 : 0.5); ovladanie(); } }
+      else if (e.key === "+" || e.key === "=" || e.key === "-" || e.key === "_") { const k = prog[i]; if (k) { zmenTempo(k.sekv, (e.key === "-" || e.key === "_") ? -0.5 : 0.5); prepocitaj(); texty(k); } }
       else if (e.key.toLowerCase() === "h") nastav("jazyk", JAZYKY[(JAZYKY.indexOf(N.jazyk) + 1) % 3]);
       else if (e.key.toLowerCase() === "t") nastav("jazykText", JAZYKY[(JAZYKY.indexOf(N.jazykText) + 1) % 3]);
       else if (e.key.toLowerCase() === "c") nastav("cislo");
@@ -395,6 +442,23 @@
     return { start, stop };
   })();
 
+  /* ---------- krátke cvičenia: dlaždice na úvode, štart 1 klikom (len ten program s jeho tempom) ---------- */
+  function vykresliKratke() {
+    const el = $("#kratke-dlazdice"); if (!el) return;
+    el.innerHTML = KRATKE.map(b => {
+      const S = SEKVENCIE[b], min = Math.max(1, Math.round(zostavProgram([b]).reduce((a, k) => a + k.trvanie, 0) / 60));
+      return `<button class="dlazdica" data-kratke="${b}" aria-label="Spustiť: ${S.nazovSk}, ${min} minút">
+        <span class="dl-hore"><b>${S.nazovSk}</b><span class="dl-min">${min} min</span></span>
+        <span class="dl-text">${S.text}</span>
+        <span class="dl-dole"><span>${S.popis} · dych ${fmtT(tempoB(b))}</span><span class="dl-start">▶ Štart</span></span></button>`;
+    }).join("");
+  }
+  vykresliKratke();
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-kratke]"); if (!t) return;
+    e.preventDefault(); cv.start("tv", [t.dataset.kratke]);
+  });
+
   /* ---------- úvodná postava: pomaly prechádza pózami Surya A ---------- */
   (() => {
     const hero = new Postava($("#hero-svg"), "#1f6f5a");
@@ -402,6 +466,7 @@
     setInterval(() => { hero.prejdi(kroky[i].poza, 1600, kroky[i].zrkadlo, null, kroky[i].cez); i = (i + 1) % kroky.length; }, 2600);
   })();
 
+  cvHotove = true;
   /* ---------- štart podľa #hash ---------- */
   const h = location.hash.replace("#", "");
   if (["dych", "nastavenie", "oprogramoch"].includes(h)) ukaz(h);
